@@ -1,1 +1,1 @@
-# Intership.github.io
+# Internship.github.io
