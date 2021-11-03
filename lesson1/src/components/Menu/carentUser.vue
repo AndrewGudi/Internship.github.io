@@ -1,38 +1,30 @@
-<template>
-  <div class="item-menu item-menu__flex item-menu__background ">
-    <div class="item-menu__avatar">
-      <img
-            :src="`/images/${carentUser.avatarka}`"
-            alt="">
-    </div>
-    <div class="item-menu__name">
-      <div class="item-menu__text">
-        {{ carentUser.username }}
-      </div>
-      <div class="item-menu__text">Product Owner</div>
-    </div>
-    <div class="item-menu__settings settings">
-      <button class="item-menu__button">
-                  <span class="item-menu__dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </span>
-      </button>
-    </div>
-  </div>
+<template lang="pug">
+.item-menu.item-menu__flex.item-menu__background
+  .item-menu__avatar
+    img(:src='`/images/${currentUser.avatarka}`' alt="#")/
+  .item-menu__name
+    .item-menu__text {{ currentUser.firstname }} {{ currentUser.lastname }}
+    .item-menu__text {{currentUser.user}}
+  .item-menu__settings.settings
+    button.item-menu__button
+      .item-menu__dots
+        span
+        span
+        span
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { UserInterface } from '@/types/user.Interface.ts'
+export default defineComponent({
   name: 'carentUser',
   props: {
-    carentUser: {
-      type: Object,
+    currentUser: {
+      type: Object as PropType<UserInterface>,
       required: true
     }
   }
-}
+})
 </script>
 
 <style scoped>

@@ -1,29 +1,26 @@
-<template>
-  <div class="item-post" v-if="post.class === 'item-post'" >
-    <div :class="`item-post__icon item-post__icon_${post.icon}`"></div>
-    <div class="item-post__text">
-      <p>{{post.name}}{{post.text}}</p>
-    </div>
-    <div class="item-post__time">
-      <div class="item-post__number">{{ post.time }}</div>
-      <div class="item-post__half-day">{{post.halfDay}}</div>
-    </div>
-  </div>
-  <div class="activity__notification" v-if="post.class === 'activity__notification'">
-    <div class="activity__text">
-      <p>{{post.text}}</p>
-    </div>
-  </div>
+<template lang="pug">
+.item-post(v-if="post.class === 'item-post'")
+  .item-post__icon(:class="`item-post__icon_${post.icon}`")/
+  .item-post__text
+    p {{post.name}}{{post.text}}
+  .item-post__time
+    .item-post__number {{ post.time }}
+    .item-post__half-day {{post.halfDay}}
+.activity__notification(v-if="post.class === 'activity__notification'")
+  .activity__text
+    p {{post.text}}
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { PostInterface } from '@/types/post.interface'
+export default defineComponent({
   name: 'ActivityPost',
   props: {
     post: {
-      type: Object,
+      type: Object as PropType<PostInterface>,
       required: true
     }
   }
-}
+})
 </script>

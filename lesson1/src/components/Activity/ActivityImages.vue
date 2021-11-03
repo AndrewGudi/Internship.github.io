@@ -1,18 +1,14 @@
-<template>
-  <img
-        :src="`/images/${image.src}`"
-        class="activity__images-photo"
-        alt="#"
-        @click="imageId"
-  />
-</template>
+<template lang="pug">
+img(:src='`/images/${image.src}`' class='activity__images-photo' alt='#' @click='imageId')
+</template>0
 
-<script>
-
-export default ({
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { ImageInterface } from '@/types/image.interface.ts'
+export default defineComponent({
   props: {
     image: {
-      type: Object,
+      type: Object as PropType<ImageInterface>,
       required: true
     }
   },

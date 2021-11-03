@@ -67,19 +67,25 @@ export default createStore({
       { id: '9', avatar: 'avatar.png', name: 'Emilee Simchenko', text: 'If you could have some kind of superpower, what would it be and why?', time: '6:02', halfDay: 'PM' },
       { id: '10', avatar: 'avatar.png', name: 'Emilee Simchenko', text: 'Whats your WiFi password?', time: '6:02', halfDay: 'PM' }
     ],
-    notification: [],
-    carentUser: { avatarka: 'avatarka.jpg', username: 'Jean Gonzales' }
+    notification: {},
+    currentUser: { avatarka: 'avatarka.jpg', firstname: 'Jean', lastname: 'Gonzales', user: 'Product Owner' }
   },
   getters: {
     getImages: state => state.images,
     getPosts: state => state.posts,
     getTasks: state => state.tasks,
     getNotification: state => state.notification,
-    carentUser: state => state.carentUser
+    getCurrentUser: state => state.currentUser
   },
   mutations: {
+    loadNotification (state, payload) {
+      state.notification = payload
+    }
   },
   actions: {
+    loadNotification (context, notification) {
+      context.commit('loadNotification', notification)
+    }
   },
   modules: {
   }
