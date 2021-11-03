@@ -22,7 +22,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { UserInterface } from '@/types/user.Interface'
-import { PostInterface } from '@/types/post.interface'
+import { TaskInterface } from '@/types/task.interface'
 export default defineComponent({
   name: 'Task',
   data () {
@@ -36,7 +36,7 @@ export default defineComponent({
       require: true
     },
     task: {
-      type: Object as PropType<PostInterface>,
+      type: Object as PropType<TaskInterface>,
       required: true
     }
   }
