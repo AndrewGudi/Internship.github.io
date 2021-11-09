@@ -1,21 +1,22 @@
 <template lang="pug">
-.activity
+clean-page
   .activity__body
     .activity__column
       .activity__day Today
-      ActivityPost(v-for="post of posts" v-bind:post="post" :key="posts.id")/
+      activity-post(v-for="post of posts" v-bind:post="post" :key="posts.id")/
       .activity__row
         .activity__images
-          ActivityImages(v-for="image of images" v-bind:image="image" :key="image.id" @imageId='imageId')/
+          activity-images(v-for="image of images" v-bind:image="image" :key="image.id" @imageId='imageId')/
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ActivityImages from '@/components/Activity/ActivityImages.vue'
-import ActivityPost from '@/components/Activity/ActivityPost.vue'
+import ActivityImages from '@/components/Layout/Content/Activity/ActivityImages.vue'
+import ActivityPost from '@/components/Layout/Content/Activity/ActivityPost.vue'
 import { mapGetters, mapMutations } from 'vuex'
+import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 export default defineComponent({
-  name: 'Activity',
   components: {
+    CleanPage,
     ActivityPost,
     ActivityImages
   },

@@ -68,6 +68,11 @@ export default createStore({
       { id: '10', avatar: 'avatar.png', name: 'Emilee Simchenko', text: 'Whats your WiFi password?', time: '6:02', halfDay: 'PM' }
     ],
     notification: {},
+    friends: [
+      { id: 0, avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak' },
+      { id: 2, avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko' },
+      { id: 3, avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Gonzales' }
+    ],
     currentUser: { avatarka: 'avatarka.jpg', firstname: 'Jean', lastname: 'Gonzales', user: 'Product Owner' }
   },
   getters: {
@@ -75,7 +80,8 @@ export default createStore({
     getPosts: state => state.posts,
     getTasks: state => state.tasks,
     getNotification: state => state.notification,
-    getCurrentUser: state => state.currentUser
+    getCurrentUser: state => state.currentUser,
+    getFriends: state => state.friends
   },
   mutations: {
     loadNotification (state, payload) {

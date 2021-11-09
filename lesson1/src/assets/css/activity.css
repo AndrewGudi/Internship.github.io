@@ -6,11 +6,6 @@
 }
 .activity {
     display: block;
-    margin: 2% auto 0;
-    max-width: 730px;
-    max-height: 591px;
-    background: #fff;
-    color: #131313;
 }
 .activity__body {
     margin: 0 30px;
@@ -27,35 +22,34 @@
 }
 .activity__notification {
     display: flex;
-    justify-content: center;
+    margin-left: 12%;
     margin-bottom: 30px;
 }
-.activity__notification p {
-    font-size: 15px;
-    line-height: 20px;
-    max-width: 492px;
-}
-.activity__text {
+.activity__notification-text{
     background: #F7F6F3;
     border-radius: 10px;
-    width: 80%;
+    width: 94%;
     padding: 20px 30px 30px 30px;
     margin-left: -2%;
 }
+.activity__notification p {
+    font-size: 15px;
+    color: #131313;
+    word-spacing: 2px;
+    line-height: 20px;
+}
 .activity__row {
     display: flex;
-    margin-left: 60px;
+    margin-left: 11%;
     margin-bottom: 97px;
 }
 .activity__images {
     display: flex;
-    width: 100px;
-    height: 100px;
 }
 .activity__images img {
     width: 100px;
     height: 100px;
-    margin-right: 10%;
+    margin-right: 10px;
 }
 .item-post {
     display: flex;
@@ -128,9 +122,8 @@
     }
     .activity__notification {
         display: flex;
-        justify-content: center;
+        margin-left: 14%;
         margin-bottom: 20px;
-        margin-left: 21px;
     }
     .activity__notification p {
         font-size: 15px;
@@ -145,7 +138,6 @@
     }
     .activity__row {
         display: flex;
-        margin-left: 0;
     }
     .activity__images img {
         width: 60px;

@@ -1,11 +1,11 @@
 <template lang="pug">
-.tasks
+clean-page
   .tasks__body
     .tasks__column
       .tasks__open-tasks Open Tasks
       .tasks__completed(v-if="tasks.length===0") Sorry, but all tasks have already been completed.
       .tasks__new-tasks
-        Task(
+        task(
             v-for="task of tasks"
             v-bind:task="task"
             :key="task.id"
@@ -14,12 +14,13 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Task from '@/components/Tasks/Task.vue'
+import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { mapGetters } from 'vuex'
+import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 
 export default defineComponent({
-  name: 'Activity',
   components: {
+    CleanPage,
     Task
   },
   computed: {

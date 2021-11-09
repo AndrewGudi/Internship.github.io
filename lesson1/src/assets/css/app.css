@@ -362,7 +362,7 @@ img {
 /*header-top*/
 .header-top {
   width: 100%;
-  height: 136px;
+  min-height: 136px;
   background: #fff;
 }
 
@@ -452,27 +452,6 @@ img {
   width: 40%;
 }
 
-.header-top .item-header__avatars {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-right: 3%;
-  height: 80%;
-}
-
-.header-top .item-header__avatar::before {
-  content: "";
-  float: left;
-  position: relative;
-  background: url("../images/avatar.png") no-repeat;
-  background-size: 100%;
-  margin-left: 5px;
-  min-width: 30px;
-  min-height: 30px;
-  max-width: 30px;
-  max-height: 30px;
-}
-
 .header-top .item-header__buttons {
   display: flex;
   align-items: center;
@@ -505,6 +484,14 @@ img {
   color: #FFC200;
   text-align: right;
   padding: 7px 14px 7px 7px;
+}
+
+.item-header__avatars {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 3%;
+  height: 80%;
 }
 
 .header-top .tab-menu {
@@ -557,7 +544,7 @@ img {
   width: 100%;
 }
 
-@media (min-width: 556px) and (max-width: 780px) {
+@media (min-width: 556px) and (max-width: 960px) {
   .menu {
     position: absolute;
     z-index: 3;
