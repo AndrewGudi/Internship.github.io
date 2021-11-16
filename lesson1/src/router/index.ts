@@ -1,35 +1,40 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Activity from '../views/Activity.vue'
+import Tasks from '../views/Tasks.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Activity',
-    props: true,
-    component: Activity
-  },
-  {
-    path: '/Tasks',
     name: 'Tasks',
     props: true,
-    component: () => import(/* webpackChunkName: "about" */ '../views/Tasks.vue')
+    component: Tasks
+  },
+  {
+    path: '/Activity',
+    name: 'Activity',
+    props: true,
+    component: () => import('../views/Activity.vue')
   },
   {
     path: '/Files',
     name: 'Files',
     props: true,
-    component: () => import(/* webpackChunkName: "about" */ '../views/Files.vue')
+    component: () => import('../views/Files.vue')
   },
   {
     path: '/Calendar',
     name: 'Calendar',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Calendar.vue')
+    component: () => import('../views/Calendar.vue')
   },
   {
     path: '/Kanban',
     name: 'Kanban',
     props: true,
-    component: () => import(/* webpackChunkName: "about" */ '../views/Kanban.vue')
+    component: () => import('../views/Kanban.vue')
+  },
+  {
+    path: '/:NotFoundPage(.*)*',
+    name: 'NotFound',
+    component: () => import('../components/Layout/NotFoundPage/NotFound.vue')
   }
 ]
 

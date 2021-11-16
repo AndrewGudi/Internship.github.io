@@ -3,7 +3,7 @@
   slot
 </template>
 
-<style scoped>
+<style lang="scss">
 .clean-page{
   display: flex;
   margin: 2% auto 0;
@@ -11,6 +11,7 @@
   width: 730px;
   height: 591px;
   background: #fff;
+  border-radius: 8px;
   color: #131313;
 }
 @media(max-width: 426px){

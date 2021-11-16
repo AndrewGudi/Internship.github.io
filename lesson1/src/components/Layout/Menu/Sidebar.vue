@@ -12,11 +12,14 @@
           carent-user(:currentUser="currentUser")/
           .item-menu.item-menu__flex-start
             .item-menu__questions
-              button.item-menu__number-questions(@click="clickShowWindow") {{CompletedTask}}
+              .item-menu__number-questions(@click="clickShowWindow") {{CompletedTask}}
               .item-menu__sub-text Completed Tasks
             .item-menu__questions
-              .item-menu__number-questions {{OpenTask}}
-              .item-menu__sub-text Open Tasks
+              router-link(to="/" v-if="OpenTask > 0")
+                .item-menu__number-questions {{OpenTask}}
+                .item-menu__sub-text Open Tasks
+              .item-menu__number-questions(v-if="OpenTask === 0" ) {{OpenTask}}
+              .item-menu__sub-text(v-if="OpenTask === 0" ) Open Tasks
           .item-menu.item-menu__column
             .item-menu__text.title menu
             a.item-menu__link(href='#') Home

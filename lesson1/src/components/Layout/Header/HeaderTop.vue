@@ -20,13 +20,13 @@
           header-btn(class='header-btn__chat') Chat
     .header-top__nav#nav
       .tab-menu
-        router-link(to="/Tasks")
+        router-link(to="/")
           | Tasks
           p
         router-link(to="/Kanban")
           | Kanban
           p
-        router-link(to="/")
+        router-link(to="/Activity")
           | Activity
           p
         router-link(to="/Calendar")

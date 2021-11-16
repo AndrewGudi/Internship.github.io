@@ -2,7 +2,3 @@
 .header-content
   router-view/
 </template>
-
-<style scoped>
-
-</style>

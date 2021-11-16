@@ -43,5 +43,4 @@ export default defineComponent({
   }
 })
 </script>
-<style src="../assets/css/activity.css">
-</style>
+<style src="../assets/css/activity.css"/>

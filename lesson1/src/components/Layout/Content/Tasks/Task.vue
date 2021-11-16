@@ -4,7 +4,7 @@
     .item-task__avatar
       img.avatar(:src='`/images/${task.avatar}`', alt='Фото профиля')
     .item-task__user
-      p {{task.name}}
+      p {{ task.firstname }} {{ task.lastname }}
     .item-task__text
       p {{task.text}}
     .item-task__time
