@@ -6,9 +6,9 @@
 <style lang="scss">
 .clean-page{
   display: flex;
+  position: relative;
   margin: 2% auto 0;
   max-width: 730px;
-  width: 730px;
   height: 591px;
   background: #fff;
   border-radius: 8px;

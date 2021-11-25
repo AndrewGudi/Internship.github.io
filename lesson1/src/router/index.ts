@@ -5,19 +5,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Tasks',
-    props: true,
     component: Tasks
   },
   {
     path: '/Activity',
     name: 'Activity',
-    props: true,
     component: () => import('../views/Activity.vue')
   },
   {
     path: '/Files',
     name: 'Files',
-    props: true,
     component: () => import('../views/Files.vue')
   },
   {
@@ -28,7 +25,6 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/Kanban',
     name: 'Kanban',
-    props: true,
     component: () => import('../views/Kanban.vue')
   },
   {

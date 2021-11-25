@@ -5,7 +5,8 @@ export interface TaskInterface{
   avatar: string,
   firstname: string,
   lastname: string,
-  text: string,
+  name: string,
+  description: string,
   src?: ImageInterface,
   time: number,
   halfDay: string

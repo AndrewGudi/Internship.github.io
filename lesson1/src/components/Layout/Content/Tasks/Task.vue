@@ -6,18 +6,12 @@
     .item-task__user
       p {{ task.firstname }} {{ task.lastname }}
     .item-task__text
-      p {{task.text}}
+      .item-task__text-name {{task.name}}
+      .item-task__text-description {{task.description}}
+      button.deleteTaskBtn(@click="deleteEvent(index)") Delete
     .item-task__time
       .item-task__number {{ task.time }}
       .item-task__half-day {{task.halfDay}}
-  .item-task__menu(v-if='showToAnswer')
-    .item-task__avatar
-      img.avatar(:src='`/images/${currentUser.avatarka}`', alt='Фото профиля')
-    .item-task__user
-      p {{currentUser.firstname}} {{currentUser.lastname}}
-    input.item-task__input(type='text')
-    button.item-task__button(@click='showToAnswer = !showToAnswer') Send
-    .item-task__time
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
@@ -38,6 +32,15 @@ export default defineComponent({
     task: {
       type: Object as PropType<TaskInterface>,
       required: true
+    },
+    index: {
+      type: Number,
+      required: true
+    }
+  },
+  methods: {
+    deleteEvent () {
+      this.$emit('deleteEvent', this.index)
     }
   }
 })
