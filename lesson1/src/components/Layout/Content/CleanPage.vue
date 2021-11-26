@@ -11,6 +11,7 @@
   max-width: 730px;
   height: 591px;
   background: #fff;
+  padding-bottom: 10px;
   border-radius: 8px;
   color: #131313;
 }
@@ -18,6 +19,7 @@
   .clean-page{
     display: flex;
     margin: 0;
+    padding-bottom: 130px;
     width: 100%;
     height: 100%;
   }

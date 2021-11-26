@@ -60,10 +60,11 @@ export default defineComponent({
     checkForm: function (e: Event) {
       const Data = new Date()
       let Hour = Data.getHours()
-      Hour = Hour % 12
+      const Hours = Data.getHours()
+      const HalfDay = Hours >= 12 ? 'PM' : 'AM'
       let Minutes: string|number = Data.getMinutes()
+      Hour = Hour % 12
       Minutes = Minutes < 10 ? '0' + Minutes : Minutes
-      const HalfDay = Hour >= 12 ? 'AM' : 'PM'
       if (this.name && this.description) {
         this.tasks.push({
           id: this.id = this.tasks.length,
