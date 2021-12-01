@@ -26,7 +26,7 @@ sidebar(v-if="showMenu"
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import Sidebar from '@/components/Layout/Menu/Sidebar.vue'
 import HeaderContent from '@/components/Layout/Content/HeaderContent.vue'
 import HeaderTop from '@/components/Layout/Header/HeaderTop.vue'
@@ -44,11 +44,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters({
-      tasks: 'getTasks',
-      notification: 'getNotification',
-      currentUser: 'getCurrentUser'
-    })
+    ...mapState(['tasks', 'notification', 'currentUser'])
   }
 })
 </script>

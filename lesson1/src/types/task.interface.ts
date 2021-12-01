@@ -1,7 +1,7 @@
 import { ImageInterface } from '@/types/image.interface'
 
 export interface TaskInterface{
-  id?: number,
+  id: number,
   avatar: string,
   firstname: string,
   lastname: string,

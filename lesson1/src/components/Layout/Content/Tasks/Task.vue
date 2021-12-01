@@ -4,11 +4,12 @@
     .item-task__avatar
       img.avatar(:src='`/images/${task.avatar}`', alt='Фото профиля')
     .item-task__user
-      p {{ task.firstname }} {{ task.lastname }}
+      p {{ task.firstname }}
+      p {{ task.lastname }}
     .item-task__text
       .item-task__text-name {{task.name}}
       .item-task__text-description {{task.description}}
-      button.deleteTaskBtn(@click="deleteEvent(index)") Delete
+      button.deleteTaskBtn(@click="deleteEvent") Delete
     .item-task__time
       .item-task__number {{ task.time }}
       .item-task__half-day {{task.halfDay}}
@@ -17,11 +18,14 @@
 import { defineComponent, PropType } from 'vue'
 import { UserInterface } from '@/types/user.Interface'
 import { TaskInterface } from '@/types/task.interface'
+import 'animate.css'
+
 export default defineComponent({
   name: 'Task',
   data () {
     return {
-      showToAnswer: false
+      showToAnswer: false,
+      deleteColor: false
     }
   },
   props: {
@@ -46,6 +50,5 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
+<style scoped lang="css">
 </style>

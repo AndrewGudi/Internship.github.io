@@ -75,14 +75,7 @@ export default createStore({
     ],
     currentUser: { avatarka: 'avatarka.jpg', firstname: 'Jean', lastname: 'Gonzales', user: 'Product Owner' }
   },
-  getters: {
-    getImages: state => state.images,
-    getPosts: state => state.posts,
-    getTasks: state => state.tasks,
-    getNotification: state => state.notification,
-    getCurrentUser: state => state.currentUser,
-    getFriends: state => state.friends
-  },
+  getters: {},
   mutations: {
     loadNotification (state, payload) {
       state.notification = payload

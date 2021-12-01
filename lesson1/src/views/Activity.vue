@@ -5,14 +5,16 @@ clean-page
       .activity__day Today
       activity-post(v-for="post of posts" v-bind:post="post" :key="posts.id")/
       .activity__row
+        .item-post__icon
         .activity__images
           activity-images(v-for="image of images" v-bind:image="image" :key="image.id" @imageId='imageId')/
+        .item-post__time
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ActivityImages from '@/components/Layout/Content/Activity/ActivityImages.vue'
 import ActivityPost from '@/components/Layout/Content/Activity/ActivityPost.vue'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 export default defineComponent({
   components: {
@@ -26,11 +28,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters({
-      notification: 'getNotification',
-      images: 'getImages',
-      posts: 'getPosts'
-    })
+    ...mapState(['notification', 'images', 'posts'])
   },
   methods: {
     ...mapMutations(['loadNotification']),

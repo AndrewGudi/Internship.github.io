@@ -11,10 +11,11 @@
   max-width: 730px;
   height: 591px;
   background: #fff;
+  padding-bottom: 10px;
   border-radius: 8px;
   color: #131313;
 }
-@media(max-width: 426px){
+@media(max-width: 434px){
   .clean-page{
     display: flex;
     margin: 0;

@@ -116,7 +116,9 @@ h6 {
   font-size: inherit;
   font-weight: 400;
 }
-
+a,button{
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
 /*--------------------*/
 /*menu*/
 
@@ -239,6 +241,13 @@ img {
   justify-content: flex-start;
   flex-direction: column;
   width: 50%;
+}
+.item-menu__questions:last-child{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: calc(50% - 10px);
+  margin-left: 10px;
 }
 .item-menu__number-questions:first-child {
   display: flex;

@@ -1,12 +1,9 @@
 .tasks {
   width: 100%;
   height: 100%;
-
-  &__body {
-    width: 100%;
-    margin: 0 30px;
+  &__buttons{
+    display: flex;
   }
-
   &__column {
     display: flex;
     flex-direction: column;
@@ -17,6 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 30px;
   }
   &__open-tasks {
     opacity: 0.5;
@@ -26,18 +24,15 @@
   }
 
   &__new-tasks {
-    height: 90%;
+    height: 100%;
+    padding: 0 30px;
     overflow: auto;
-    display: flex;
-    flex-direction: column;
     &::-webkit-scrollbar {
       width: 0;
     }
-
     & {
       -ms-overflow-style: none;
     }
-
     & {
       overflow: -moz-scrollbars-none;
     }
@@ -55,18 +50,9 @@
       align-items: center;
       width: 80%;
       flex-direction: column;
-      ul.name{
-        li:first-child{
+      .error{
           height: 14px;
           color: red;
-        }
-      }
-      ul.description{
-        li:last-child{
-          height: 14px;
-          color: red;
-          margin-bottom: 7px;
-        }
       }
     }
     &-button-add {
@@ -76,7 +62,7 @@
       background-size: 16px;
       border-radius: 15px;
       height: 60px;
-      width: 60px;
+      min-width: 60px;
       opacity: 0.7;
       margin-left: 21px;
       border: none;
@@ -97,11 +83,11 @@
       text-align: center;
     }
 
-    &-button-add:hover{
+    &-button-add:active{
       background: #fff8dd;
       color: #FFC200;
     }
-    &-button-send:hover{
+    &-button-send:active{
       background: #fff8dd;
       color: #FFC200;
     }
@@ -202,23 +188,30 @@ form{
   &__content{
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    max-height: 100%;
+    height: 100%;
     width: 100%;
     margin-bottom: 10px;
   }
   &__text{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     width: 62%;
     height: 100%;
     background: #F7F6F3;
     border-radius: 10px;
     &-name{
-      margin: 10px 15px 10px 10px;
+      margin: 10px 10px 10px 10px;
       max-height: 50px;
       font-size: 16px;
       line-height: 1;
       font-weight: bold;
       overflow: auto;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
       &::-webkit-scrollbar {
         width: 0;
       }
@@ -235,7 +228,10 @@ form{
       max-height: 150px;
       overflow: auto;
       line-height: 1.2;
-      margin: 10px 15px 10px 10px;
+      margin: 10px 10px 10px 10px;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
       &::-webkit-scrollbar {
         width: 0;
       }
@@ -262,6 +258,7 @@ form{
   }
   &__time {
     display: flex;
+    flex-wrap: wrap;
     opacity: 0.7;
     justify-content: flex-end;
     width: 12%;
@@ -271,9 +268,12 @@ form{
   }
   &__user{
     font-weight: 500;
+    display: flex;
+    flex-direction: column;
     width: 18%;
     p{
-      margin: 10px 15px 10px 10px;
+      margin: 0 5px 5px 15px;
+      font-size: 15px;
     }
   }
 }
@@ -284,15 +284,79 @@ form{
   height: 20px;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  transition: color 0.3s, background 0.3s;
 }
-.deleteTaskBtn:hover{
-  background: #fff8dd;
-  color: #FFC200;
+.list-item {
+  display: block;
+  max-height: 100%;
+}
+.list-enter-active{
+  animation: heartBeat;
+  animation-duration: 1.4s;
+}
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.08);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.list-leave-active {
+  animation: fadeOutRight;
+  animation-duration: 1.3s;
+  transition: all 1.3s;
+}
+.list-leave-to{
+  max-height: 0;
+}
+.animate-grow {
+  font-size: 14px;
+  animation: animate_grow 1.5s ease;
+}
+@keyframes animate_grow {
+  0% {
+    transform: scale(1);
+    font-size: 14px;
+  }
+  50% {
+    transform: scale(1.05);
+    font-size: 14px;
+  }
+  100% {
+    transform: scale(1);
+    font-size: 14px;
+  }
+}
+.top-button {
+  background: #EAEAEA;
+  text-align: center;
+  padding: 10px;
+  bottom: 100px;
+  right: 30px;
+  cursor: pointer;
+  color: #131313;
+  opacity: 0.7;
+  background-size: 16px;
+  border-radius: 15px;
+  height: 60px;
+  min-width: 60px;
+  font-size: 12px;
 }
 .cl-btn-7 {
   width: 32px;
   height: 32px;
-  border-radius: 30px;
+  border-radius: 32px;
   position: absolute;
   z-index: 1;
   right: 10px;
@@ -305,10 +369,10 @@ form{
   position: absolute;
   z-index: 2;
   transform: rotate(45deg);
-  font-size: 50px;
+  font-size: 45px;
   line-height: 1;
-  top: -8px;
-  left: 1px;
+  top: -6px;
+  left: 3px;
   transition: all 0.3s cubic-bezier(0.77, 0, 0.2, 0.85);
 }
 .cl-btn-7:after {
@@ -336,6 +400,17 @@ form{
   }
 }
 @media (min-width: 300px) and (max-width: 556px) {
+  .deleteTaskBtn {
+    transition: color 0.1ms, background 0.1ms;
+  }
+  .deleteTaskBtn:hover {
+    background: inherit;
+    color: inherit;
+  }
+  .deleteTaskBtn:active {
+    background: #fff8dd;
+    color: #FFC200;
+  }
   form {
     display: flex;
     flex-direction: column;
@@ -355,9 +430,8 @@ form{
     min-width: 319px;
     width: 100vw;
     height: 100%;
-    &__body {
-      margin: 0 15px;
-      padding-bottom: 130px;
+    &__new-tasks{
+      padding: 10px 15px 115px 15px;
     }
     &__open-task {
       opacity: 0.5;
@@ -367,23 +441,22 @@ form{
     }
   }
   .item-task {
-    display: flex;
+    display: block;
     width: 100%;
-    margin-bottom: 10px;
     &__user{
       display: none;
     }
-    &__icon {
+    &__avatar {
       width: 12%;
       max-width: 40px;
       max-height: 40px;
       border-radius: 50%;
+      margin-right: 5px;
     }
     &__text {
       line-height: 20px;
       font-size: 16px;
-      margin-left: 10px;
-      width: 74%;
+      width: calc(74% - 10px);
     }
     &__time {
       display: flex;
@@ -393,6 +466,7 @@ form{
       opacity: 0.7;
       font-size: 14px;
       line-height: 20px;
+      margin-left: 5px;
     }
     &__number {
       margin-right: 0;

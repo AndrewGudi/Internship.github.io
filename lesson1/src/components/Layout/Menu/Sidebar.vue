@@ -9,7 +9,7 @@
           button.item-menu__search
       .menu__nav
         .menu__column
-          carent-user(:currentUser="currentUser")/
+          current-user(:currentUser="currentUser")/
           .item-menu.item-menu__flex-start
             .item-menu__questions
               .item-menu__number-questions(@click="clickShowWindow") {{CompletedTask}}
@@ -29,10 +29,10 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import carentUser from '@/components/Layout/Menu/CarentUser.vue'
+import currentUser from '@/components/Layout/Menu/CurrentUser.vue'
 export default defineComponent({
   components: {
-    carentUser
+    currentUser
   },
   props: {
     CompletedTask: {

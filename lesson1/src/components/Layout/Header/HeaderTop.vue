@@ -40,7 +40,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import FriendAvatar from '@/components/Layout/Header/HeaderFriendsAvatars/FriendAvatar.vue'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import HeaderBtn from '@/components/Layout/Header/HeaderBtn.vue'
 export default defineComponent({
   components: { HeaderBtn, FriendAvatar },
@@ -51,10 +51,7 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapGetters({
-      friends: 'getFriends'
-
-    })
+    ...mapState(['friends'])
   },
   methods: {
     clickShowMenu () {
