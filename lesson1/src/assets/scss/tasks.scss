@@ -330,8 +330,8 @@ form{
     font-size: 14px;
   }
   50% {
-    transform: scale(1.05);
-    font-size: 14px;
+    transform: scale(1.06);
+    font-size: calc(14px * 1.2);
   }
   100% {
     transform: scale(1);
