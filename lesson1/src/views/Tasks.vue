@@ -8,16 +8,29 @@ clean-page
         button.tasks__input-button-add(:class="{'active': showWindow}" @click="showWindow = !showWindow") ADD
     .tasks__completed(v-if="tasks.length===0") Sorry, but all tasks have already been completed.
     .tasks__new-tasks#container
-      transition-group(name="list")
-          task(
-            v-for="(task, index) in reversedTasks"
-            class="list-item"
-            v-bind:task="task"
-            v-bind:index="index"
-            :key="task.id"
-            v-bind:currentUser="currentUser"
-            @deleteEvent="deleteEvent"
-            )
+      transition-group(
+        name="list"
+        )
+        task(
+        v-for="(task, index) in reversedTasks"
+        class="list-item"
+        v-bind:task="task"
+        v-bind:index="index"
+        :key="task.id"
+        :ref="el => { if (el) divs[index] = el }"
+        v-bind:currentUser="currentUser"
+        @deleteEvent="deleteEvent"
+        )
+      //task(
+      //  v-for="(task, index) in reversedTasks"
+      //  class="list-item"
+      //  :ref="animation"
+      //  v-bind:task="task"
+      //  v-bind:index="index"
+      //  :key="task.id"
+      //  v-bind:currentUser="currentUser"
+      //  @deleteEvent="deleteEvent"
+      //  )
     form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
       .task__avatar
         img.avatar(:src="`/images/${currentUser.avatarka}`", alt="Фото профиля")
@@ -31,7 +44,7 @@ clean-page
       button.tasks__input-button-send(@click="scrollToTop") SEND
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { ref, onMounted, defineComponent } from 'vue'
 import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { mapState } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
@@ -42,22 +55,30 @@ export default defineComponent({
     CleanPage,
     Task
   },
-  mounted () {
-    const lineItem = document.querySelectorAll('.list-item')
-    lineItem.forEach((item, index: number) => {
-      setTimeout(() => {
-        item.classList.add('animate-grow')
-        function handleAnimationEnd (event: Event) {
-          event.stopPropagation()
-          item.classList.remove('animate-grow')
-        }
-        item.addEventListener('animationend', handleAnimationEnd, { once: true })
-      }, 1000 * (index + 1))
+  setup () {
+    // eslint-disable-next-line
+    const divs = ref<any[]>([])
+    onMounted(() => {
+      divs.value.forEach((item, index: number) => {
+        setTimeout(() => {
+          item.$el.classList.add('animate-grow')
+          function handleAnimationEnd (event: Event) {
+            event.stopPropagation()
+            item.$el.classList.remove('animate-grow')
+          }
+          item.$el.addEventListener('animationend', handleAnimationEnd, { once: true })
+        }, 1000 * (index + 1))
+      })
     })
+    return {
+      divs
+    }
   },
   computed: {
     ...mapState(['tasks', 'currentUser']),
-    reversedTasks (): string {
+    reversedTasks ()
+    :
+      string {
       return this.tasks.slice().reverse()
     }
   },
@@ -89,7 +110,7 @@ export default defineComponent({
         let Hour = Data.getHours()
         const Hours = Data.getHours()
         const HalfDay = Hours >= 12 ? 'PM' : 'AM'
-        let Minutes: string|number = Data.getMinutes()
+        let Minutes: string | number = Data.getMinutes()
         Hour = Hour % 12
         Minutes = Minutes < 10 ? '0' + Minutes : Minutes
         this.tasks.push({

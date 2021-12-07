@@ -14,7 +14,7 @@ clean-page
 import { defineComponent } from 'vue'
 import ActivityImages from '@/components/Layout/Content/Activity/ActivityImages.vue'
 import ActivityPost from '@/components/Layout/Content/Activity/ActivityPost.vue'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 export default defineComponent({
   components: {
@@ -31,7 +31,7 @@ export default defineComponent({
     ...mapState(['notification', 'images', 'posts'])
   },
   methods: {
-    ...mapMutations(['loadNotification']),
+    ...mapActions(['loadNotification']),
     imageId (id: number) {
       this.idNotification.id = id
     }
