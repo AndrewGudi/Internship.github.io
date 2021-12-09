@@ -21,16 +21,6 @@ clean-page
         v-bind:currentUser="currentUser"
         @deleteEvent="deleteEvent"
         )
-      //task(
-      //  v-for="(task, index) in reversedTasks"
-      //  class="list-item"
-      //  :ref="animation"
-      //  v-bind:task="task"
-      //  v-bind:index="index"
-      //  :key="task.id"
-      //  v-bind:currentUser="currentUser"
-      //  @deleteEvent="deleteEvent"
-      //  )
     form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
       .task__avatar
         img.avatar(:src="`/images/${currentUser.avatarka}`", alt="Фото профиля")
@@ -49,6 +39,7 @@ import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { mapState } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import 'animate.css'
+import { StatusType } from '@/constants/enumStatusType'
 
 export default defineComponent({
   components: {
@@ -76,9 +67,7 @@ export default defineComponent({
   },
   computed: {
     ...mapState(['tasks', 'currentUser']),
-    reversedTasks ()
-    :
-      string {
+    reversedTasks (): string {
       return this.tasks.slice().reverse()
     }
   },
@@ -113,13 +102,20 @@ export default defineComponent({
         let Minutes: string | number = Data.getMinutes()
         Hour = Hour % 12
         Minutes = Minutes < 10 ? '0' + Minutes : Minutes
+        const addDay = 7
+        Data.setDate(Data.getDate() + addDay)
+        const dd = String(Data.getDate()).padStart(2, '0')
+        const mm = String(Data.getMonth() + 1).padStart(2, '0')
+        const yyyy = Data.getFullYear()
         this.tasks.push({
+          status: StatusType.ToDo,
           id: this.id = this.tasks.length,
           avatar: this.currentUser.avatarka,
           firstname: this.currentUser.firstname,
           lastname: this.currentUser.lastname,
           name: this.name,
           description: this.description,
+          dateOfCompletion: mm + '/' + dd + '/' + yyyy,
           time: (Hour + ':' + Minutes),
           halfDay: HalfDay
         })

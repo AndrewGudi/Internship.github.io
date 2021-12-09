@@ -5,6 +5,7 @@ export interface TaskInterface{
   avatar: string,
   firstname: string,
   lastname: string,
+  status:string,
   name: string,
   description: string,
   src?: ImageInterface,
