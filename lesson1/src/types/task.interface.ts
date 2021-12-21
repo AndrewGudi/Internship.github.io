@@ -1,14 +1,16 @@
 import { ImageInterface } from '@/types/image.interface'
+import { StatusType } from '@/constants/enumStatusType'
 
 export interface TaskInterface{
-  id: number,
-  avatar: string,
+  id: string,
+  avatar: ImageInterface,
   firstname: string,
   lastname: string,
-  status:string,
+  status:StatusType,
   name: string,
   description: string,
   src?: ImageInterface,
   time: number,
-  halfDay: string
+  halfDay: string,
+  dateOfCompletion: string
 }

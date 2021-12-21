@@ -1,12 +1,12 @@
 <template lang="pug">
 .item-task
-  .item-task__content(@click='showToAnswer = !showToAnswer')
+  .item-task__content
     .item-task__avatar
       img.avatar(:src='`/images/${task.avatar}`', alt='Фото профиля')
     .item-task__user
       p {{ task.firstname }}
       p {{ task.lastname }}
-    .item-task__text
+    .item-task__text(@click="clickTaskDetails();clickShowTaskDetailsWindow()")
       .item-task__text-name {{task.name}}
       .item-task__text-description {{task.description}}
       button.deleteTaskBtn(@click="deleteEvent") Delete
@@ -40,11 +40,21 @@ export default defineComponent({
     index: {
       type: Number,
       required: true
+    },
+    ShowTaskDetails: {
+      type: Boolean,
+      required: true
     }
   },
   methods: {
     deleteEvent () {
       this.$emit('deleteEvent', this.index)
+    },
+    clickTaskDetails () {
+      this.$emit('taskDetails', this.task)
+    },
+    clickShowTaskDetailsWindow () {
+      this.$emit('ShowTaskDetails', this.ShowTaskDetails)
     }
   }
 })

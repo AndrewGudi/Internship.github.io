@@ -1,72 +1,128 @@
 <template lang="pug">
-clean-page
-  .task-completion
-    .task-completion__row
-      .task-completion__column-name__to-do To Do
-      .task-completion__column-name__in-progress In Progress
-      .task-completion__column-name__done Done
-    .task-completion__body
-      .task-completion__to-do
-        task-plate(
-          v-for="item in reversedTasks.todo"
-          :key="item.id"
-          v-bind:item="item"
-          class="to-do"
+task-details-modal(
+  v-bind:item="this.item"
+  v-if="ShowTaskDetails"
+  :ShowTaskDetails="ShowTaskDetails"
+  @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+)
+.task-completion
+  .task-completion__body
+    .task-completion__to-do
+      .task-completion__name__to-do To Do
+      .task-completion__scroll.drop-zone(
+        @drop="onDrop($event, status.ToDo)"
+        @dragover.prevent
+        @dragenter.prevent
         )
-      .task-completion__in-progress
-        task-plate(
-          v-for="item in reversedTasks.inProgress"
-          :key="item.id"
+        task-plate.to-do(
+          class="drag-el"
           v-bind:item="item"
-          class="in-progress"
-        )
-      .task-completion__done
-        task-plate(
-          v-for="item in reversedTasks.done"
+          v-for="item in getStatus(status.ToDo)"
           :key="item.id"
-          v-bind:item="item"
-          class="done"
+          draggable="true"
+          :ShowTaskDetails="ShowTaskDetails"
+          @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+          @taskDetails="taskDetails"
+          @dragstart="startDrag($event, item)")
+    .task-completion__in-progress
+      .task-completion__name__in-progress In Progress
+      .task-completion__scroll.drop-zone(
+        @drop="onDrop($event, status.InProgress)"
+        @dragenter.prevent
+        @dragover.prevent
         )
+        task-plate.in-progress(v-for="item in getStatus(status.InProgress)"
+          class="drag-el"
+          v-bind:item="item"
+          :key="item.id"
+          draggable="true"
+          :ShowTaskDetails="ShowTaskDetails"
+          @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+          @taskDetails="taskDetails"
+          @dragstart="startDrag($event, item)")
+    .task-completion__done
+      .task-completion__name__done Done
+      .task-completion__scroll.drop-zone(
+        @drop="onDrop($event, status.Done)"
+        @dragenter.prevent
+        @dragover.prevent
+        )
+        task-plate.done(v-for="item in getStatus(status.Done)"
+          class="drag-el"
+          v-bind:item="item"
+          :key="item.id"
+          draggable="true"
+          :ShowTaskDetails="ShowTaskDetails"
+          @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+          @taskDetails="taskDetails"
+          @dragstart="startDrag($event, item)")
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import ComingSoon from '@/components/Layout/Content/ComingSoon.vue'
-import { mapState } from 'vuex'
 import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
+import draggable from 'vuedraggable'
+import Task from '@/components/Layout/Content/Tasks/Task.vue'
+import { useStore } from 'vuex'
+import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
 
 export default defineComponent({
   components: {
+    TaskDetailsModal,
+    Task,
     TaskPlate,
     ComingSoon,
-    CleanPage
+    CleanPage,
+    draggable
   },
-  computed: {
-    ...mapState(['tasks', 'currentUser']),
-    reversedTasks (): { todo: Array<TaskInterface>; inProgress: Array<TaskInterface>; done: Array<TaskInterface> } {
-      const tasks = this.tasks.slice().reverse()
-      const todo:Array<TaskInterface> = []
-      const inProgress:Array<TaskInterface> = []
-      const done:Array<TaskInterface> = []
-      tasks.forEach((item:any) => {
-        if (item.status === StatusType.ToDo) {
-          todo.push(item)
+  data () {
+    return {
+      controlOnStart: true,
+      status: StatusType,
+      item: [],
+      ShowTaskDetails: false
+    }
+  },
+  setup: function () {
+    const store = useStore()
+    const tasks = store.state.tasks
+    const getStatus = (status: StatusType) => {
+      return tasks.filter((task: TaskInterface) => task.status === status)
+    }
+    // eslint-disable-next-line
+    const startDrag = (evt: any, item: TaskInterface) => {
+      evt.dataTransfer.dropEffect = 'move'
+      evt.dataTransfer.effectAllowed = 'move'
+      evt.dataTransfer.setData('itemID', item.id)
+    }
+    // eslint-disable-next-line
+    const onDrop = (evt: any, status: StatusType) => {
+      const itemID = evt.dataTransfer.getData('itemID')
+      const item = tasks.find((item: TaskInterface) => item.id === itemID)
+      if (item.status === StatusType.Done) {
+        if (status !== StatusType.ToDo) {
+          item.status = status
         }
-        if (item.status === StatusType.InProgress) {
-          inProgress.push(item)
-        }
-        if (item.status === StatusType.Done) {
-          done.push(item)
-        }
-      })
-      return {
-        todo,
-        inProgress,
-        done
+      } else if (item.status !== (status === StatusType.Done)) {
+        item.status = status
       }
+    }
+    return {
+      getStatus,
+      startDrag,
+      onDrop,
+      tasks: computed(() => store.state.tasks),
+      currentUser: computed(() => store.state.currentUser)
+    }
+  },
+  methods: {
+    // eslint-disable-next-line
+    taskDetails (item: any) {
+      this.item = item
     }
   }
 })
@@ -76,6 +132,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
+  padding-top: 2%;
   &__row{
     display: flex;
     justify-content: center;
@@ -83,55 +141,59 @@ export default defineComponent({
     min-height: 81px;
     padding: 0 15px;
   }
-  &__column-name__to-do{
+  &__name__to-do,
+  &__name__done,
+  &__name__in-progress{
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    overflow: auto;
     opacity: 0.5;
     font-size: 14px;
     text-transform: uppercase;
-    width: 30%;
-    height: 100%;
-    margin-right: 10px;
+    height: 50px;
+    width: 100%;
   }
-  &__column-name__in-progress{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.5;
-    font-size: 14px;
-    text-transform: uppercase;
-    width: 30%;
+  &__scroll{
     height: 100%;
-    margin-right: 10px;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+    & {
+      -ms-overflow-style: none;
+    }
+    & {
+      overflow: -moz-scrollbars-none;
+    }
   }
-  &__column-name__done{
+  &__column{
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.5;
-    font-size: 14px;
-    text-transform: uppercase;
-    width: 30%;
-    height: 100%;
+    width: 60%;
+    margin-left: 10px;
+  }
+  .over {
+    position: relative;
+  }
+  .over:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left:0;
+    right: 0;
+    height:5px;
+    background: red;
   }
   &__body{
     display: flex;
     justify-content: center;
-    overflow: hidden;
+    flex-wrap: wrap;
+    overflow: auto;
     width: 100%;
-    padding: 0 15px;
-  }
-  &__to-do{
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    width: 30%;
     height: 100%;
-    margin-right: 10px;
+    padding: 0 5px 0 15px;
     &::-webkit-scrollbar {
       width: 0;
     }
@@ -142,31 +204,21 @@ export default defineComponent({
       overflow: -moz-scrollbars-none;
     }
   }
-  &__in-progress{
+  &__to-do,
+  &__in-progress,
+  &__done{
     display: flex;
     flex-direction: column;
-    align-items: center;
-    overflow: auto;
-    height: 100%;
-    width: 30%;
+    padding: 0 20px;
+    width: 350px;
+    height: 730px;
+    overflow: hidden;
     margin-right: 10px;
-    &::-webkit-scrollbar {
-      width: 0;
-    }
-    & {
-      -ms-overflow-style: none;
-    }
-    & {
-      overflow: -moz-scrollbars-none;
-    }
-  }
-  &__done {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow: auto;
-    height: 100%;
-    width: 30%;
+    margin-bottom: 10px;
+    background: white;
+    border: 1px solid black;
+    border-radius: 15px;
+    box-shadow: 10px 10px 5px #525252;
     &::-webkit-scrollbar {
       width: 0;
     }
@@ -179,10 +231,10 @@ export default defineComponent({
   }
   &__box{
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    position: relative;
     width: 100%;
+    padding: 10px 10px;
     min-height: 80px;
     max-height: 120px;
     margin-bottom: 10px;
@@ -192,20 +244,26 @@ export default defineComponent({
   &__box:hover{
     border: 2px solid #525252;
   }
+  &__avatar{
+    height: 40px;
+    min-width: 40px;
+    img{
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+    }
+  }
   &__name {
     display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 16px;
     font-weight: bold;
+    margin-bottom: 10px;
     width: 100%;
-    padding: 10px 10px;
-    height: 60px;
-    max-height: 60px;
     overflow: hidden;
     p{
       overflow: auto;
       max-height: 50px;
+      padding: 0;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
@@ -226,16 +284,31 @@ export default defineComponent({
     display: flex;
     font-size: 16px;
     font-weight: bold;
-    justify-content: flex-end;
   }
 }
 .to-do{
   background-color: #EAEAEA;
+  border-radius: 6px;
 }
 .in-progress{
   background-color: #fff8dd;
+  border-radius: 6px;
 }
 .done{
   background-color: rgba(255, 194, 0, 0.7);
+  border-radius: 6px;
+}
+@media (min-width: 300px) and (max-width: 556px) {
+  .task-completion {
+    padding-top: 0;
+    &__to-do,
+    &__in-progress,
+    &__done{
+      height: 550px;
+    }
+    &__to-do{
+      margin-top: 10px;
+    }
+  }
 }
 </style>

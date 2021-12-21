@@ -331,7 +331,7 @@ form{
   }
   50% {
     transform: scale(1.06);
-    font-size: 14.8px;
+    font-size: 15px;
   }
   100% {
     transform: scale(1);
@@ -431,7 +431,7 @@ form{
     width: 100vw;
     height: 100%;
     &__new-tasks{
-      padding: 10px 15px 115px 15px;
+      padding: 10px 15px;
     }
     &__open-task {
       opacity: 0.5;

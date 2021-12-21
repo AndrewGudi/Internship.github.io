@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import { StatusType } from '@/constants/enumStatusType'
 
 export default createStore({
   state: {
@@ -55,17 +56,17 @@ export default createStore({
       }
     ],
     tasks: [
-      { status: 'todo', id: '0', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Who would you be in the film of your life?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'done', id: '1', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your favorite dinosaur?', time: '6:00', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'inProgress', id: '2', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Which of your bad habits are you willing to admit?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'inProgress', id: '3', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'If you could only eat one food for the rest of your life, what would it be?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'todo', id: '4', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Would you rather own a dragon or be a dragon?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'done', id: '5', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your WiFi password?', time: '6:00', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'todo', id: '6', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'If you could do anything in the world in terms of your career, what would you choose?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'inProgress', id: '7', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Which Pokemon would you choose: Bulbasaur, Squirtle or Charmander?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'inProgress', id: '8', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'What is your favorite animal in the world?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'todo', id: '9', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'If you could have some kind of superpower, what would it be and why?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
-      { status: 'todo', id: '10', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your WiFi password?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' }
+      { status: StatusType.ToDo, id: '0', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Who would you be in the film of your life?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.Done, id: '1', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your favorite dinosaur?', time: '6:00', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.InProgress, id: '2', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Which of your bad habits are you willing to admit?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.InProgress, id: '3', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'If you could only eat one food for the rest of your life, what would it be?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.ToDo, id: '4', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Would you rather own a dragon or be a dragon?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.Done, id: '5', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your WiFi password?', time: '6:00', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.ToDo, id: '6', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'If you could do anything in the world in terms of your career, what would you choose?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.InProgress, id: '7', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Which Pokemon would you choose: Bulbasaur, Squirtle or Charmander?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.InProgress, id: '8', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'What is your favorite animal in the world?', time: '6:01', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.ToDo, id: '9', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'If you could have some kind of superpower, what would it be and why?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' },
+      { status: StatusType.ToDo, id: '10', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your WiFi password?', time: '6:02', halfDay: 'PM', dateOfCompletion: '12/9/2021' }
     ],
     notification: {},
     friends: [
@@ -77,13 +78,32 @@ export default createStore({
   },
   getters: {},
   mutations: {
-    loadNotification (state, payload) {
-      state.notification = payload
+    loadNotification (state, imageId) {
+      state.notification = imageId
+    },
+    changeObjectStatus (state, { id, status }) {
+      const found = state.tasks.find(item => item.id === id)
+      if (found) {
+        found.status = status
+      }
+    },
+    changeObjectDetails (state, { id, name, description }) {
+      const found = state.tasks.find(item => item.id === id)
+      if (found) {
+        found.name = name
+        found.description = description
+      }
     }
   },
   actions: {
     loadNotification (context, notification) {
       context.commit('loadNotification', notification)
+    },
+    changeObjectStatus (context, { id, status }) {
+      context.commit('changeObjectStatus', { id: id, status: status })
+    },
+    changeObjectDetails (context, { id, name, description }) {
+      context.commit('changeObjectDetails', { id: id, name: name, description: description })
     }
   },
   modules: {
