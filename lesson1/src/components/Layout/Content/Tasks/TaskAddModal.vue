@@ -1,14 +1,17 @@
 <template lang="pug">
 form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
-  .task__avatar
+  .tasks__avatar
     img.avatar(:src="`/images/${currentUser.avatarka}`", alt="Фото профиля")
-  .task__user
+  .tasks__user
     p {{currentUser.firstname}} {{currentUser.lastname}}
   .tasks__input-block
     textarea#name.tasks__task-name(v-model="name" type="text" name="name" placeholder="Task name" maxlength = "100")
     .error {{errorName}}
     textarea#description.tasks__task-description(v-model="description" type="text" name="description" placeholder="Task description" maxlength = "100")
     .error {{errorDescription}}
+    .tasks__execute-before
+      .tasks__calendar-icon
+      calendar-input(v-model="executeBeforeDate").tasks__calendar-input
   button.tasks__input-button-send(@click="scrollToTop") SEND
 </template>
 
@@ -16,11 +19,19 @@ form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
 import { StatusType } from '@/constants/enumStatusType'
 import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
+import { DatePicker } from 'v-calendar'
+import CalendarInput from '@/components/Layout/Content/CalendarInput.vue'
 
 export default defineComponent({
   name: 'TaskAddModal',
+  components: {
+    CalendarInput,
+    DatePicker
+  },
   data () {
     return {
+      postDate: new Date(),
+      executeBeforeDate: new Date(),
       errorName: '',
       errorDescription: '',
       name: '',
@@ -51,18 +62,37 @@ export default defineComponent({
         return
       }
       if (this.name && this.description) {
-        const Data = new Date()
-        let Hour = Data.getHours()
-        const Hours = Data.getHours()
-        const HalfDay = Hours >= 12 ? 'PM' : 'AM'
-        let Minutes: string | number = Data.getMinutes()
-        Hour = Hour % 12
-        Minutes = Minutes < 10 ? '0' + Minutes : Minutes
-        const addDay = 7
-        Data.setDate(Data.getDate() + addDay)
-        const dd = String(Data.getDate()).padStart(2, '0')
-        const mm = String(Data.getMonth() + 1).padStart(2, '0')
-        const yyyy = Data.getFullYear()
+        const postDate = this.postDate
+        const executeBeforeDate = this.executeBeforeDate
+        let postDateEdited = {}
+        let executeBeforeEdited = {}
+        const Data = [postDate, executeBeforeDate]
+        let i:any = 0
+        for (i in Data) {
+          let Hour = Data[i].getHours()
+          const Hours = Data[i].getHours()
+          const HalfDay = Hours >= 12 ? 'PM' : 'AM'
+          let Minutes: string | number = Data[i].getMinutes()
+          Hour = Hour % 12
+          Minutes = Minutes < 10 ? '0' + Minutes : Minutes
+          const dd = String(Data[i].getDate()).padStart(2, '0')
+          const mm = String(Data[i].getMonth() + 1).padStart(2, '0')
+          const yyyy = Data[i].getFullYear()
+          if (Data[i] === postDate) {
+            postDateEdited = {
+              date: mm + '/' + dd + '/' + yyyy,
+              time: (Hour + ':' + Minutes),
+              halfDay: HalfDay
+            }
+          }
+          if (Data[i] === executeBeforeDate) {
+            executeBeforeEdited = {
+              date: mm + '/' + dd + '/' + yyyy,
+              time: (Hour + ':' + Minutes),
+              halfDay: HalfDay
+            }
+          }
+        }
         this.tasks.push({
           status: StatusType.ToDo,
           id: String(this.id = this.tasks.length),
@@ -71,9 +101,8 @@ export default defineComponent({
           lastname: this.currentUser.lastname,
           name: this.name,
           description: this.description,
-          dateOfCompletion: mm + '/' + dd + '/' + yyyy,
-          time: (Hour + ':' + Minutes),
-          halfDay: HalfDay
+          postDate: postDateEdited,
+          executeBefore: executeBeforeEdited
         })
         this.name = ''
         this.description = ''

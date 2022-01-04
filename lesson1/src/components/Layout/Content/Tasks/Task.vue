@@ -6,13 +6,13 @@
     .item-task__user
       p {{ task.firstname }}
       p {{ task.lastname }}
-    .item-task__text(@click="clickTaskDetails();clickShowTaskDetailsWindow()")
+    .item-task__text
       .item-task__text-name {{task.name}}
-      .item-task__text-description {{task.description}}
+      .item-task__text-description(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.description}}
       button.deleteTaskBtn(@click="deleteEvent") Delete
     .item-task__time
-      .item-task__number {{ task.time }}
-      .item-task__half-day {{task.halfDay}}
+      .item-task__number {{ task.postDate.time }}
+      .item-task__half-day {{task.postDate.halfDay}}
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'

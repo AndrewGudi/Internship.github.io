@@ -1,12 +1,13 @@
 <template lang="pug">
-.list-group-item
+.list-group-item(:style="{ background: (leftTime.changeColorRed || leftTime.changeColorOrange) }")
   .task-completion__box(@click="clickTaskDetails" v-on:click="clickShowTaskDetailsWindow")
     .task-completion__avatar
       img(:src="`/images/${item.avatar}`" alt="#")
     .task-completion__column
       .task-completion__name
         p {{item.name}}
-      .task-completion__time {{item.dateOfCompletion}}
+      .task-completion__data
+        .task-completion__left-time(v-if="!leftTime.changeColorRed") Left: {{leftTime.days}} {{leftTime.time}}
   .item-menu__settings
     button.item-menu__button( :class="{'bgNone': !isShowDropdown, 'bgGray': isShowDropdown}" v-on:click="isShowDropdown=!isShowDropdown")
       .item-menu__dots
@@ -28,6 +29,7 @@ import { defineComponent, PropType } from 'vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
 import { mapActions } from 'vuex'
+import moment from 'moment'
 
 export default defineComponent({
   name: 'TaskPlate',
@@ -45,6 +47,28 @@ export default defineComponent({
     isShowDropdown: false,
     status: StatusType
   }),
+  computed: {
+    leftTime () {
+      const itemTime = this.item.executeBefore.time + '' + this.item.executeBefore.halfDay
+      const number = moment(itemTime, ['h:mm A']).format('HH:mm')
+      // eslint-disable-next-line
+      const executeBeforeDate: any = moment(new Date(this.item.executeBefore.date + ',' + number)).toDate().getTime()
+      // eslint-disable-next-line
+      const presentDay: any = moment(new Date()).toDate().getTime()
+      const leftTime = executeBeforeDate - presentDay
+      const changeColorRed = 'red'
+      const changeColorOrange = 'orange'
+      const days = moment(leftTime).format('D') + 'd.'
+      const time = moment(leftTime).format('HH') + 'h.' + ' ' + moment(leftTime).format('mm') + 'm.'
+      if (moment(leftTime).format('D') > '1' && leftTime > 1) {
+        return { days }
+      } else if (moment(leftTime).format('D') <= '1' && leftTime > 1) {
+        return { time, changeColorOrange }
+      } else {
+        return { changeColorRed }
+      }
+    }
+  },
   methods: {
     ...mapActions(['changeObjectStatus']),
     changeStatus (status: StatusType) {

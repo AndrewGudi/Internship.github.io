@@ -12,6 +12,9 @@
               p {{item.firstname}}
             .task-details__last-name
               p {{item.lastname}}
+            .task-details__task-date
+              .task-details__post From: {{item.postDate.date}}
+              .task-details__completion To: {{item.executeBefore.date}}
         .task-details__text
           .task-details__task-name
             p(v-if="showButtonEdit === true") {{item.name}}
@@ -142,6 +145,12 @@ export default defineComponent({
     & {
       overflow: -moz-scrollbars-none;
     }
+  }
+  &__last-name{
+    margin-bottom: 8px;
+  }
+  &__post{
+    margin-bottom: 2px;
   }
   &__task-name:focus{
     border: 2px solid #FFC200;

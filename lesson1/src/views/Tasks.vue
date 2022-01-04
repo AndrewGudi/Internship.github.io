@@ -97,6 +97,7 @@ export default defineComponent({
         this.tasks.splice(this.tasks.length - 1 - index, 1)
       }
     },
+    // eslint-disable-next-line
     taskDetails (item: any) {
       this.item = item
     }
