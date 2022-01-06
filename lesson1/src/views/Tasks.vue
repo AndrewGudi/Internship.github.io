@@ -5,6 +5,13 @@ task-details-modal(
   :ShowTaskDetails="ShowTaskDetails"
   @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
 )
+.tasks__add-modal(v-if="showWindow")
+  .tasks__bg(@click="showWindow = !showWindow")
+  task-add-modal(
+    v-click-away="onClickAway"
+    @showWindow="showWindow = !showWindow"
+    v-model:showWindow="showWindow"
+  )
 clean-page
   .tasks__column
     .tasks__row
@@ -30,9 +37,6 @@ clean-page
         @taskDetails="taskDetails"
         @deleteEvent="deleteEvent"
         )
-    task-add-modal(
-      :showWindow="showWindow"
-    )
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent } from 'vue'
@@ -42,8 +46,10 @@ import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import 'animate.css'
 import TaskAddModal from '@/components/Layout/Content/Tasks/TaskAddModal.vue'
 import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
+import { mixin as VueClickAway } from 'vue3-click-away'
 
 export default defineComponent({
+  mixins: [VueClickAway],
   components: {
     TaskDetailsModal,
     TaskAddModal,
@@ -57,9 +63,9 @@ export default defineComponent({
       name: '',
       id: Number,
       description: '',
-      showWindow: false,
       ShowTaskDetails: false,
-      item: []
+      item: [],
+      showWindow: false
     }
   },
   setup () {
@@ -91,6 +97,11 @@ export default defineComponent({
     scrollToTop: function () {
       const container = this.$el.querySelector('#container')
       container.scrollTop = !container.scrollHeight
+    },
+    onClickAway (event:Event) {
+      if (event) {
+        this.showWindow = !this.showWindow
+      }
     },
     deleteEvent: function (index: number) {
       if (index > -1) {

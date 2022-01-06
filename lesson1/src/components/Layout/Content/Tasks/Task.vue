@@ -7,7 +7,7 @@
       p {{ task.firstname }}
       p {{ task.lastname }}
     .item-task__text
-      .item-task__text-name {{task.name}}
+      .item-task__text-name(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.name}}
       .item-task__text-description(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.description}}
       button.deleteTaskBtn(@click="deleteEvent") Delete
     .item-task__time

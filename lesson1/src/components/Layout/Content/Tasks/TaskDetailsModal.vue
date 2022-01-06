@@ -1,7 +1,7 @@
 <template lang="pug">
 .task-details
   .task-details__bg
-  .task-details__modal
+  .task-details__modal(v-click-away="onClickAway")
     .task-details__body
       .task-details__culomn
         .task-details__user
@@ -40,9 +40,14 @@
 import { defineComponent, PropType } from 'vue'
 import { TaskInterface } from '@/types/task.interface'
 import { mapActions } from 'vuex'
+import { StatusType } from '@/constants/enumStatusType'
+import { mixin as VueClickAway } from 'vue3-click-away'
+
 export default defineComponent({
   name: 'TaskDetailsModal',
+  mixins: [VueClickAway],
   data: () => ({
+    status: StatusType,
     showButtonSave: false,
     showButtonEdit: true,
     changeName: '',
@@ -70,6 +75,11 @@ export default defineComponent({
     ...mapActions(['changeObjectDetails']),
     clickShowTaskDetailsWindow () {
       this.$emit('ShowTaskDetails', this.ShowTaskDetails)
+    },
+    onClickAway (event:Event) {
+      if (event) {
+        return this.clickShowTaskDetailsWindow()
+      }
     },
     changeTask () {
       this.changeName = this.item.name
@@ -100,10 +110,10 @@ export default defineComponent({
     position: absolute;
     background: #ffffff;
     margin-top: 100px;
-    padding: 0 10px;
     border: 2px solid #FFC200;
+    padding: 0 10px;
     border-radius: 10px;
-    width: 350px;
+    max-width: 350px;
     height: 200px;
   }
   &__body{
@@ -177,11 +187,11 @@ export default defineComponent({
     border: 2px solid #FFC200;
   }
   &__user{
-    width: 20%;
+    width: 22%;
   }
   &__text{
-    padding: 0 10px;
-    width: 60%;
+    margin: 0 10px;
+    max-width: 60%;
   }
   &__button{
     position: relative;

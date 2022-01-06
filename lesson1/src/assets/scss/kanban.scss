@@ -172,7 +172,6 @@
     display: flex;
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px;
     width: 100%;
     overflow: hidden;
     p{
@@ -194,6 +193,9 @@
         overflow: -moz-scrollbars-none;
       }
     }
+  }
+  &__left-time{
+    margin-top: 10px;
   }
   &__data{
     display: flex;

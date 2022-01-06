@@ -18,11 +18,10 @@ task-details-modal(
         @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
         @taskDetails="taskDetails"
       )
-    .calendar(v-if="ShowCalendar")
+    .calendar(v-if="ShowCalendar" v-click-away="onClickAway")
       v-date-picker(
         :value="null"
         v-model="range"
-        :model-config="modelConfig"
         color="red"
         is-white
         is-range
@@ -97,8 +96,10 @@ import draggable from 'vuedraggable'
 import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { useStore } from 'vuex'
 import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
+import { mixin as VueClickAway } from 'vue3-click-away'
 
 export default defineComponent({
+  mixins: [VueClickAway],
   components: {
     TaskDetailsModal,
     Task,
@@ -110,10 +111,6 @@ export default defineComponent({
   data () {
     return {
       range: '',
-      modelConfig: {
-        type: 'string',
-        mask: 'MM/D/YYYY'
-      },
       taskFilter: [],
       search: '',
       controlOnStart: true,
@@ -139,11 +136,7 @@ export default defineComponent({
     const onDrop = (evt: any, status: StatusType) => {
       const itemID = evt.dataTransfer.getData('itemID')
       const item = tasks.find((item: TaskInterface) => item.id === itemID)
-      if (item.status === StatusType.Done) {
-        if (status !== StatusType.ToDo) {
-          item.status = status
-        }
-      } else if (item.status !== (status === StatusType.Done)) {
+      if (item.status !== StatusType.Done) {
         item.status = status
       }
     }
@@ -154,7 +147,7 @@ export default defineComponent({
       // eslint-disable-next-line
       const resultDate:any = []
       // eslint-disable-next-line
-      const taskFilterDate:any = []
+      let taskFilterDate:any = []
       for (let i = startDate; i <= endDate; i = i + 24 * 60 * 60 * 1000) {
         const Data = new Date(i)
         const dd = String(Data.getDate())
@@ -167,15 +160,15 @@ export default defineComponent({
         return tasks.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
       }
       if (range && !search) {
-        tasks.forEach((task: TaskInterface) => {
-          for (let j = 0; j < resultDate.length; j++) {
-            if (task.postDate.date === resultDate[j]) {
+        for (let j = 0; j < resultDate.length; j++) {
+          tasks.forEach((task: TaskInterface) => {
+            if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
               taskFilterDate.push(task)
             }
-          }
-        })
-        console.log(taskFilterDate)
-        return taskFilterDate
+          })
+        }
+        // eslint-disable-next-line
+        return taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
       }
       if (range && search) {
         for (let j = 0; j < resultDate.length; j++) {
@@ -185,6 +178,8 @@ export default defineComponent({
             }
           })
         }
+        // eslint-disable-next-line
+        taskFilterDate = taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
         return taskFilterDate.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
       }
     }
@@ -198,6 +193,12 @@ export default defineComponent({
     }
   },
   methods: {
+    // eslint-disable-next-line
+    onClickAway (event: Event) {
+      if (event) {
+        this.ShowCalendar = !this.ShowCalendar
+      }
+    },
     // eslint-disable-next-line
     taskDetails (item: any) {
       this.item = item
