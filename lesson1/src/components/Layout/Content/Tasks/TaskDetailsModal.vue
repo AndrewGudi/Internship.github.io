@@ -1,7 +1,7 @@
 <template lang="pug">
 .task-details
-  .task-details__bg
-  .task-details__modal(v-click-away="onClickAway")
+  .task-details__bg(@click="clickShowTaskDetailsWindow")
+  .task-details__modal
     .task-details__body
       .task-details__culomn
         .task-details__user
@@ -12,9 +12,9 @@
               p {{item.firstname}}
             .task-details__last-name
               p {{item.lastname}}
-            .task-details__task-date
-              .task-details__post From: {{item.postDate.date}}
-              .task-details__completion To: {{item.executeBefore.date}}
+          .task-details__task-date
+            .task-details__post From: {{item.postDate.date}}
+            .task-details__completion To: {{item.executeBefore.date}}
         .task-details__text
           .task-details__task-name
             p(v-if="showButtonEdit === true") {{item.name}}
@@ -30,10 +30,11 @@
           @click="clickShowTaskDetailsWindow"
           v-if="showButtonEdit !== true"
           ) Cancel
-      button.task-details__button.save(
-        v-if="showButtonSave"
-        @click="changeObject(this.changeName, this.changeDescription); clickShowTaskDetailsWindow()"
-        ) Save
+      .task-details__button-box
+        button.task-details__button.save(
+          v-if="showButtonSave"
+          @click="changeObject(this.changeName, this.changeDescription); clickShowTaskDetailsWindow()"
+          ) Save
 </template>
 
 <script lang="ts">
@@ -76,11 +77,6 @@ export default defineComponent({
     clickShowTaskDetailsWindow () {
       this.$emit('showTaskDetails', this.showTaskDetails)
     },
-    onClickAway (event:Event) {
-      if (event) {
-        return this.clickShowTaskDetailsWindow()
-      }
-    },
     changeTask () {
       this.changeName = this.item.name
       this.changeDescription = this.item.description
@@ -98,7 +94,7 @@ export default defineComponent({
   justify-content: center;
   position: absolute;
   width: 100%;
-  height: calc(100% - 138px);
+  height: calc(100% - 136px);
   z-index: 20;
   &__bg{
     width: 100%;
@@ -109,11 +105,12 @@ export default defineComponent({
   &__modal{
     position: absolute;
     background: #ffffff;
-    margin-top: 100px;
+    margin: 100px 10px 0 10px;
     border: 2px solid #FFC200;
     padding: 0 10px;
     border-radius: 10px;
-    max-width: 350px;
+    min-width: 400px;
+    max-width: 400px;
     height: 200px;
   }
   &__body{
@@ -191,12 +188,17 @@ export default defineComponent({
   }
   &__text{
     margin: 0 10px;
-    max-width: 60%;
+    min-width: 55%;
+  }
+  &__button-box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   &__button{
     position: relative;
     color: #131313;
-    width: 20%;
+    min-width: 20%;
     height: 30px;
     background: #EAEAEA;
     background-size: 16px;
@@ -217,7 +219,6 @@ export default defineComponent({
   }
 }
 .save{
-  margin-left: 65px;
   width: 200px;
 }
 textarea {
@@ -236,6 +237,84 @@ textarea {
 
   & {
     overflow: -moz-scrollbars-none;
+  }
+}
+@media (min-width: 375px) and (max-width: 420px){
+  .task-details {
+    &__modal {
+      position: absolute;
+      background: #ffffff;
+      margin-top: 100px;
+      border: 2px solid #FFC200;
+      padding: 0 10px;
+      border-radius: 10px;
+      min-width: 90%;
+      height: 200px;
+    }
+
+    &__body {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+}
+@media (min-width: 300px) and (max-width: 374px) {
+  .task-details {
+    &__modal {
+      position: absolute;
+      background: #ffffff;
+      margin-top: 100px;
+      border: 2px solid #FFC200;
+      padding: 0 10px;
+      border-radius: 10px;
+      min-width: calc(100% - 20px);
+      height: 360px;
+    }
+    &__culomn{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      height: 300px;
+    }
+    &__user{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    &__avatar{
+      width: 80px;
+      height: 80px;
+    }
+    &__user-name{
+      width: 80%;
+      display: flex;
+      font-size: 20px;
+      font-weight: bold;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    &__first-name{
+      margin-right: 10px;
+    }
+    &__task-date{
+      display: flex;
+      justify-content: center;
+    }
+    &__post{
+      margin-right: 10px;
+    }
+    &__text{
+      width: 90%;
+    }
+  }
+  .edit,.cancel{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 62px;
   }
 }
 </style>
