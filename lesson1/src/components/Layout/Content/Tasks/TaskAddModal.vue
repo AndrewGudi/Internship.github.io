@@ -1,5 +1,6 @@
 <template lang="pug">
 form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
+  .cl-btn-7(@click="showWindowModal")
   .tasks__avatar
     img.avatar(:src="`/images/${currentUser.avatarka}`", alt="Фото профиля")
   .tasks__user
@@ -49,6 +50,9 @@ export default defineComponent({
     ...mapState(['tasks', 'currentUser'])
   },
   methods: {
+    showWindowModal () {
+      this.$emit('showWindow', this.showWindow)
+    },
     checkForm: function (e: Event) {
       this.errorName = ''
       this.errorDescription = ''
@@ -67,6 +71,7 @@ export default defineComponent({
         let postDateEdited = {}
         let executeBeforeEdited = {}
         const Data = [postDate, executeBeforeDate]
+        // eslint-disable-next-line
         let i:any = 0
         for (i in Data) {
           let Hour = Data[i].getHours()
@@ -75,8 +80,8 @@ export default defineComponent({
           let Minutes: string | number = Data[i].getMinutes()
           Hour = Hour % 12
           Minutes = Minutes < 10 ? '0' + Minutes : Minutes
-          const dd = String(Data[i].getDate()).padStart(2, '0')
-          const mm = String(Data[i].getMonth() + 1).padStart(2, '0')
+          const dd = String(Data[i].getDate())
+          const mm = String(Data[i].getMonth() + 1)
           const yyyy = Data[i].getFullYear()
           if (Data[i] === postDate) {
             postDateEdited = {

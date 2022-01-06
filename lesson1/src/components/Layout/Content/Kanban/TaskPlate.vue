@@ -7,7 +7,7 @@
       .task-completion__name
         p {{item.name}}
       .task-completion__data
-        .task-completion__left-time(v-if="!leftTime.changeColorRed") Left: {{leftTime.days}} {{leftTime.time}}
+        .task-completion__left-time(v-if="!leftTime.changeColorRed") Left: {{leftTime.timeLeftToComplete}}
   .item-menu__settings
     button.item-menu__button( :class="{'bgNone': !isShowDropdown, 'bgGray': isShowDropdown}" v-on:click="isShowDropdown=!isShowDropdown")
       .item-menu__dots
@@ -16,9 +16,9 @@
         span
   .item-menu(v-if="isShowDropdown")
     div(@click="clickTaskDetails(); clickShowTaskDetailsWindow(); isShowDropdown = !isShowDropdown" ) EDIT
-    div( v-if="this.item.status !== status.ToDo && this.item.status !== status.Done" @click="changeStatus(status.ToDo)")
+    div( v-if="this.item.status !== status.ToDo && this.item.status !== status.Done && this.item.status !== status.InProgress" @click="changeStatus(status.ToDo)")
       p TO DO
-    div( v-if="this.item.status !== status.InProgress" @click="changeStatus(status.InProgress)")
+    div( v-if="this.item.status !== status.InProgress && this.item.status !== status.Done" @click="changeStatus(status.InProgress)")
       p IN PROGRESS
     div( v-if="this.item.status !== status.Done" @click="changeStatus(status.Done)")
       p DONE
@@ -38,12 +38,13 @@ export default defineComponent({
       type: Object as PropType<TaskInterface>,
       required: true
     },
-    ShowTaskDetails: {
+    showTaskDetails: {
       type: Boolean,
       required: true
     }
   },
   data: () => ({
+    dateNow: moment(new Date()).toDate().getTime(),
     isShowDropdown: false,
     status: StatusType
   }),
@@ -54,19 +55,33 @@ export default defineComponent({
       // eslint-disable-next-line
       const executeBeforeDate: any = moment(new Date(this.item.executeBefore.date + ',' + number)).toDate().getTime()
       // eslint-disable-next-line
-      const presentDay: any = moment(new Date()).toDate().getTime()
-      const leftTime = executeBeforeDate - presentDay
+      const dateNow:any = this.dateNow
       const changeColorRed = 'red'
       const changeColorOrange = 'orange'
-      const days = moment(leftTime).format('D') + 'd.'
-      const time = moment(leftTime).format('HH') + 'h.' + ' ' + moment(leftTime).format('mm') + 'm.'
-      if (moment(leftTime).format('D') > '1' && leftTime > 1) {
-        return { days }
-      } else if (moment(leftTime).format('D') <= '1' && leftTime > 1) {
-        return { time, changeColorOrange }
-      } else {
+      let timeLeftToComplete = ''
+
+      let seconds = Math.floor((executeBeforeDate - (dateNow)) / 1000)
+      let minutes = Math.floor(seconds / 60)
+      let hours = Math.floor(minutes / 60)
+      const days = Math.floor(hours / 24)
+
+      hours = hours - (days * 24)
+      minutes = minutes - (days * 24 * 60) - (hours * 60)
+      seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60)
+
+      if (days === 0 && days < 1) {
+        timeLeftToComplete = hours + ' h. ' + minutes + ' m. '
+        return { timeLeftToComplete, changeColorOrange }
+      }
+      if (days < 0) {
         return { changeColorRed }
       }
+      if (days >= 1) {
+        timeLeftToComplete = days + ' d. ' + hours + ' h. ' + minutes + ' m. '
+        return { timeLeftToComplete }
+      }
+
+      return 0
     }
   },
   methods: {
@@ -78,7 +93,7 @@ export default defineComponent({
       this.$emit('taskDetails', this.item)
     },
     clickShowTaskDetailsWindow () {
-      this.$emit('ShowTaskDetails', this.ShowTaskDetails)
+      this.$emit('ShowTaskDetails', this.showTaskDetails)
     }
   }
 })

@@ -560,6 +560,7 @@ img {
   height: calc(100% - 136px);
 }
 
+
 @media (min-width: 556px) and (max-width: 960px) {
   .menu {
     position: absolute;
