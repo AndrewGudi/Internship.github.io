@@ -58,7 +58,7 @@ export default defineComponent({
       type: Object as PropType<TaskInterface>,
       required: true
     },
-    ShowTaskDetails: {
+    showTaskDetails: {
       type: Boolean,
       required: true
     }
@@ -74,7 +74,7 @@ export default defineComponent({
   methods: {
     ...mapActions(['changeObjectDetails']),
     clickShowTaskDetailsWindow () {
-      this.$emit('ShowTaskDetails', this.ShowTaskDetails)
+      this.$emit('showTaskDetails', this.showTaskDetails)
     },
     onClickAway (event:Event) {
       if (event) {

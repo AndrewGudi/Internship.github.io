@@ -1,24 +1,25 @@
 <template lang="pug">
 task-details-modal(
   v-bind:item="this.item"
-  v-if="ShowTaskDetails"
-  :ShowTaskDetails="ShowTaskDetails"
-  @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+  v-if="showTaskDetails"
+  v-click-away="onClickAwayShowTaskDetails"
+  :showTaskDetails="showTaskDetails"
+  @showTaskDetails="showTaskDetails = !showTaskDetails"
 )
 .task-completion__input-block
   .task-completion__input
-    input( type="text" v-model="search")
-    button.task-completion__calendar-open(@click="ShowCalendar=!ShowCalendar")
-    .task-completion__scroll.search(v-if="search || range || range && search")
+    input( type="text" v-model="search" @click="showSearchModal")
+    button.task-completion__calendar-open(@click="showCalendar=!showCalendar")
+    .task-completion__scroll.search(v-if="(search || range || range && search) && showSearch" v-click-away="onClickAwayShowSearch")
       task-plate.searchTask(
         v-bind:item="item"
         v-for="item in searchTask(search, range)"
         :key="item.id"
-        :ShowTaskDetails="ShowTaskDetails"
-        @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+        :showTaskDetails="showTaskDetails"
+        @showTaskDetails="showTaskDetails = !showTaskDetails"
         @taskDetails="taskDetails"
       )
-    .calendar(v-if="ShowCalendar" v-click-away="onClickAway")
+    .calendar(v-if="showCalendar" v-click-away="onClickAway")
       v-date-picker(
         :value="null"
         v-model="range"
@@ -43,8 +44,8 @@ task-details-modal(
           v-for="item in getStatus(status.ToDo)"
           :key="item.id"
           draggable="true"
-          :ShowTaskDetails="ShowTaskDetails"
-          @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+          :showTaskDetails="showTaskDetails"
+          @showTaskDetails="showTaskDetails = !showTaskDetails"
           @taskDetails="taskDetails"
           @dragstart="startDrag($event, item)")
     .task-completion__in-progress
@@ -61,8 +62,8 @@ task-details-modal(
           v-bind:item="item"
           :key="item.id"
           draggable="true"
-          :ShowTaskDetails="ShowTaskDetails"
-          @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+          :showTaskDetails="showTaskDetails"
+          @showTaskDetails="showTaskDetails = !showTaskDetails"
           @taskDetails="taskDetails"
           @dragstart="startDrag($event, item)")
     .task-completion__done
@@ -79,8 +80,8 @@ task-details-modal(
           v-bind:item="item"
           :key="item.id"
           draggable="true"
-          :ShowTaskDetails="ShowTaskDetails"
-          @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+          :showTaskDetails="showTaskDetails"
+          @showTaskDetails="showTaskDetails = !showTaskDetails"
           @taskDetails="taskDetails"
           @dragstart="startDrag($event, item)")
 </template>
@@ -116,8 +117,9 @@ export default defineComponent({
       controlOnStart: true,
       status: StatusType,
       item: [],
-      ShowTaskDetails: false,
-      ShowCalendar: false
+      showTaskDetails: false,
+      showCalendar: false,
+      showSearch: true
     }
   },
   setup: function () {
@@ -193,10 +195,27 @@ export default defineComponent({
     }
   },
   methods: {
+    showSearchModal () {
+      if (((this.search || this.range || (this.range && this.search)) !== '')) {
+        this.showSearch = !this.showSearch
+      }
+    },
+    // eslint-disable-next-line
+    onClickAwayShowTaskDetails (event: Event) {
+      if (event) {
+        this.showTaskDetails = !this.showSearch
+      }
+    },
+    // eslint-disable-next-line
+    onClickAwayShowSearch (event: Event) {
+      if (event) {
+        this.showSearch = !this.showSearch
+      }
+    },
     // eslint-disable-next-line
     onClickAway (event: Event) {
       if (event) {
-        this.ShowCalendar = !this.ShowCalendar
+        this.showCalendar = !this.showCalendar
       }
     },
     // eslint-disable-next-line

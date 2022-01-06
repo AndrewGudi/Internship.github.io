@@ -1,9 +1,9 @@
 <template lang="pug">
 task-details-modal(
   v-bind:item="this.item"
-  v-if="ShowTaskDetails"
-  :ShowTaskDetails="ShowTaskDetails"
-  @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+  v-if="showTaskDetails"
+  :showTaskDetails="showTaskDetails"
+  @showTaskDetails="showTaskDetails = !showTaskDetails"
 )
 .tasks__add-modal(v-if="showWindow")
   .tasks__bg(@click="showWindow = !showWindow")
@@ -29,8 +29,8 @@ clean-page
         class="list-item"
         v-bind:task="task"
         v-bind:index="index"
-        :ShowTaskDetails="ShowTaskDetails"
-        @ShowTaskDetails="ShowTaskDetails = !ShowTaskDetails"
+        :showTaskDetails="showTaskDetails"
+        @showTaskDetails="showTaskDetails = !showTaskDetails"
         :key="task.id"
         :ref="el => { if (el) divs[index] = el }"
         v-bind:currentUser="currentUser"
@@ -63,7 +63,7 @@ export default defineComponent({
       name: '',
       id: Number,
       description: '',
-      ShowTaskDetails: false,
+      showTaskDetails: false,
       item: [],
       showWindow: false
     }

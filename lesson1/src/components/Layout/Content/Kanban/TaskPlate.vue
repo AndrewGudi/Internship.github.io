@@ -38,7 +38,7 @@ export default defineComponent({
       type: Object as PropType<TaskInterface>,
       required: true
     },
-    ShowTaskDetails: {
+    showTaskDetails: {
       type: Boolean,
       required: true
     }
@@ -93,7 +93,7 @@ export default defineComponent({
       this.$emit('taskDetails', this.item)
     },
     clickShowTaskDetailsWindow () {
-      this.$emit('ShowTaskDetails', this.ShowTaskDetails)
+      this.$emit('ShowTaskDetails', this.showTaskDetails)
     }
   }
 })
