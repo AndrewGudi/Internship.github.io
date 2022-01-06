@@ -2,15 +2,14 @@
 task-details-modal(
   v-bind:item="this.item"
   v-if="showTaskDetails"
-  v-click-away="onClickAwayShowTaskDetails"
   :showTaskDetails="showTaskDetails"
   @showTaskDetails="showTaskDetails = !showTaskDetails"
 )
-.task-completion__input-block
+.task-completion__input-block(v-click-away="onClickAwayShowSearch")
   .task-completion__input
     input( type="text" v-model="search" @click="showSearchModal")
     button.task-completion__calendar-open(@click="showCalendar=!showCalendar")
-    .task-completion__scroll.search(v-if="(search || range || range && search) && showSearch" v-click-away="onClickAwayShowSearch")
+    .task-completion__scroll.search(v-if="(search || range || range && search) && showSearch")
       task-plate.searchTask(
         v-bind:item="item"
         v-for="item in searchTask(search, range)"
@@ -175,7 +174,7 @@ export default defineComponent({
       if (range && search) {
         for (let j = 0; j < resultDate.length; j++) {
           tasks.forEach((task: TaskInterface) => {
-            if (task.postDate.date === resultDate[j]) {
+            if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
               taskFilterDate.push(task)
             }
           })
@@ -196,24 +195,20 @@ export default defineComponent({
   },
   methods: {
     showSearchModal () {
-      if (((this.search || this.range || (this.range && this.search)) !== '')) {
+      if (!this.showSearch) {
         this.showSearch = !this.showSearch
       }
     },
     // eslint-disable-next-line
-    onClickAwayShowTaskDetails (event: Event) {
-      if (event) {
-        this.showTaskDetails = !this.showSearch
+    onClickAwayShowSearch (event:any) {
+      if (this.showSearch) {
+        if (event) {
+          this.showSearch = !this.showSearch
+        }
       }
     },
     // eslint-disable-next-line
-    onClickAwayShowSearch (event: Event) {
-      if (event) {
-        this.showSearch = !this.showSearch
-      }
-    },
-    // eslint-disable-next-line
-    onClickAway (event: Event) {
+    onClickAway (event:any) {
       if (event) {
         this.showCalendar = !this.showCalendar
       }

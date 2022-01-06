@@ -8,7 +8,6 @@ task-details-modal(
 .tasks__add-modal(v-if="showWindow")
   .tasks__bg(@click="showWindow = !showWindow")
   task-add-modal(
-    v-click-away="onClickAway"
     @showWindow="showWindow = !showWindow"
     v-model:showWindow="showWindow"
   )
