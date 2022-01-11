@@ -41,7 +41,7 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    showTaskDetails: {
+    isShowTaskDetails: {
       type: Boolean,
       required: true
     }
@@ -54,7 +54,7 @@ export default defineComponent({
       this.$emit('taskDetails', this.task)
     },
     clickShowTaskDetailsWindow () {
-      this.$emit('showTaskDetails', this.showTaskDetails)
+      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
     }
   }
 })

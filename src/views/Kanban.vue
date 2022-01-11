@@ -1,24 +1,24 @@
 <template lang="pug">
 task-details-modal(
-  v-bind:item="this.item"
-  v-if="showTaskDetails"
-  :showTaskDetails="showTaskDetails"
-  @showTaskDetails="showTaskDetails = !showTaskDetails"
+  :item="this.item"
+  v-if="isShowTaskDetails"
+  :isShowTaskDetails="isShowTaskDetails"
+  @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
 )
 .task-completion__input-block(v-click-away="onClickAwayShowSearch")
   .task-completion__input
-    input( type="text" v-model="search" @click="showSearchModal")
-    button.task-completion__calendar-open(@click="showCalendar=!showCalendar")
-    .task-completion__scroll.search(v-if="(search || range || range && search) && showSearch")
+    input( type="text" v-model="search" @click="isShowSearchModal")
+    button.task-completion__calendar-open(@click="isShowCalendar=!isShowCalendar")
+    .task-completion__scroll.search(v-if="(search || range || range && search) && isShowSearch")
       task-plate.searchTask(
-        v-bind:item="item"
+        :item="item"
         v-for="item in searchTask(search, range)"
         :key="item.id"
-        :showTaskDetails="showTaskDetails"
-        @showTaskDetails="showTaskDetails = !showTaskDetails"
+        :isShowTaskDetails="isShowTaskDetails"
+        @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
         @taskDetails="taskDetails"
       )
-    .calendar(v-if="showCalendar" v-click-away="onClickAway")
+    .calendar(v-if="isShowCalendar" v-click-away="onClickAway")
       v-date-picker(
         :value="null"
         v-model="range"
@@ -28,85 +28,32 @@ task-details-modal(
       )
 .task-completion
   .task-completion__body
-    .task-completion__to-do
-      .task-completion__info
-        .task-completion__name__to-do To Do
-        .task-completion__number-of-tasks {{getStatus(status.ToDo).length}}
-      .task-completion__scroll.drop-zone(
-        @drop="onDrop($event, status.ToDo)"
-        @dragover.prevent
-        @dragenter.prevent
-        )
-        task-plate.to-do(
-          class="drag-el"
-          v-bind:item="item"
-          v-for="item in getStatus(status.ToDo)"
-          :key="item.id"
-          draggable="true"
-          :showTaskDetails="showTaskDetails"
-          @showTaskDetails="showTaskDetails = !showTaskDetails"
-          @taskDetails="taskDetails"
-          @dragstart="startDrag($event, item)")
-    .task-completion__in-progress
-      .task-completion__info
-        .task-completion__name__in-progress In Progress
-        .task-completion__number-of-tasks {{getStatus(status.InProgress).length}}
-      .task-completion__scroll.drop-zone(
-        @drop="onDrop($event, status.InProgress)"
-        @dragenter.prevent
-        @dragover.prevent
-        )
-        task-plate.in-progress(v-for="item in getStatus(status.InProgress)"
-          class="drag-el"
-          v-bind:item="item"
-          :key="item.id"
-          draggable="true"
-          :showTaskDetails="showTaskDetails"
-          @showTaskDetails="showTaskDetails = !showTaskDetails"
-          @taskDetails="taskDetails"
-          @dragstart="startDrag($event, item)")
-    .task-completion__done
-      .task-completion__info
-        .task-completion__name__done Done
-        .task-completion__number-of-tasks {{getStatus(status.Done).length}}
-      .task-completion__scroll.drop-zone(
-        @drop="onDrop($event, status.Done)"
-        @dragenter.prevent
-        @dragover.prevent
-        )
-        task-plate.done(v-for="item in getStatus(status.Done)"
-          class="drag-el"
-          v-bind:item="item"
-          :key="item.id"
-          draggable="true"
-          :showTaskDetails="showTaskDetails"
-          @showTaskDetails="showTaskDetails = !showTaskDetails"
-          @taskDetails="taskDetails"
-          @dragstart="startDrag($event, item)")
+    task-column(v-for="taskStatus in status"
+    :taskStatus="taskStatus"
+    :isShowTaskDetails="isShowTaskDetails"
+    @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
+    @taskDetails="taskDetails"
+    )
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
-import ComingSoon from '@/components/Layout/Content/ComingSoon.vue'
-import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
-import draggable from 'vuedraggable'
-import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { useStore } from 'vuex'
 import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
 import { mixin as VueClickAway } from 'vue3-click-away'
+import TaskColumn from '@/components/Layout/Content/Kanban/TaskColumn.vue'
+import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
 
 export default defineComponent({
   mixins: [VueClickAway],
   components: {
-    TaskDetailsModal,
-    Task,
     TaskPlate,
-    ComingSoon,
-    CleanPage,
-    draggable
+    TaskColumn,
+    TaskDetailsModal,
+    CleanPage
   },
   data () {
     return {
@@ -116,31 +63,14 @@ export default defineComponent({
       controlOnStart: true,
       status: StatusType,
       item: [],
-      showTaskDetails: false,
-      showCalendar: false,
-      showSearch: true
+      isShowTaskDetails: false,
+      isShowCalendar: false,
+      isShowSearch: true
     }
   },
-  setup: function () {
+  setup () {
     const store = useStore()
     const tasks = store.state.tasks
-    const getStatus = (status: StatusType) => {
-      return tasks.filter((task: TaskInterface) => task.status === status)
-    }
-    // eslint-disable-next-line
-    const startDrag = (evt: any, item: TaskInterface) => {
-      evt.dataTransfer.dropEffect = 'move'
-      evt.dataTransfer.effectAllowed = 'move'
-      evt.dataTransfer.setData('itemID', item.id)
-    }
-    // eslint-disable-next-line
-    const onDrop = (evt: any, status: StatusType) => {
-      const itemID = evt.dataTransfer.getData('itemID')
-      const item = tasks.find((item: TaskInterface) => item.id === itemID)
-      if (item.status !== StatusType.Done) {
-        item.status = status
-      }
-    }
     // eslint-disable-next-line
     const searchTask = (search: string, range: any) => {
       const startDate = Date.parse(range.start)
@@ -160,7 +90,7 @@ export default defineComponent({
       if (search && !range) {
         return tasks.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
       }
-      if (range && !search) {
+      if ((range && !search) || (range && search)) {
         for (let j = 0; j < resultDate.length; j++) {
           tasks.forEach((task: TaskInterface) => {
             if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
@@ -168,49 +98,39 @@ export default defineComponent({
             }
           })
         }
-        // eslint-disable-next-line
-        return taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
-      }
-      if (range && search) {
-        for (let j = 0; j < resultDate.length; j++) {
-          tasks.forEach((task: TaskInterface) => {
-            if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
-              taskFilterDate.push(task)
-            }
-          })
+        if (range && !search) {
+          // eslint-disable-next-line
+          return taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
         }
-        // eslint-disable-next-line
-        taskFilterDate = taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
-        return taskFilterDate.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
+        if (range && search) {
+          // eslint-disable-next-line
+          taskFilterDate = taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
+          return taskFilterDate.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
+        }
       }
     }
     return {
-      getStatus,
-      startDrag,
-      onDrop,
-      searchTask,
-      tasks: computed(() => store.state.tasks),
-      currentUser: computed(() => store.state.currentUser)
+      searchTask
     }
   },
   methods: {
-    showSearchModal () {
-      if (!this.showSearch) {
-        this.showSearch = !this.showSearch
+    isShowSearchModal () {
+      if (!this.isShowSearch) {
+        this.isShowSearch = !this.isShowSearch
       }
     },
     // eslint-disable-next-line
     onClickAwayShowSearch (event:any) {
-      if (this.showSearch) {
+      if (this.isShowSearch) {
         if (event) {
-          this.showSearch = !this.showSearch
+          this.isShowSearch = !this.isShowSearch
         }
       }
     },
     // eslint-disable-next-line
     onClickAway (event:any) {
       if (event) {
-        this.showCalendar = !this.showCalendar
+        this.isShowCalendar = !this.isShowCalendar
       }
     },
     // eslint-disable-next-line

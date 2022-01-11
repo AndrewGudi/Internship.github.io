@@ -59,7 +59,7 @@ export default defineComponent({
       type: Object as PropType<TaskInterface>,
       required: true
     },
-    showTaskDetails: {
+    isShowTaskDetails: {
       type: Boolean,
       required: true
     }
@@ -75,7 +75,7 @@ export default defineComponent({
   methods: {
     ...mapActions(['changeObjectDetails']),
     clickShowTaskDetailsWindow () {
-      this.$emit('showTaskDetails', this.showTaskDetails)
+      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
     },
     changeTask () {
       this.changeName = this.item.name
@@ -188,7 +188,7 @@ export default defineComponent({
   }
   &__text{
     margin: 0 10px;
-    min-width: 55%;
+    width: 55%;
   }
   &__button-box{
     display: flex;

@@ -1,13 +1,18 @@
 <template lang="pug">
-.list-group-item(:style="{ background: (leftTime.changeColorRed || leftTime.changeColorOrange) }")
-  .task-completion__box(@click="clickTaskDetails" v-on:click="clickShowTaskDetailsWindow")
+.list-group-item
+  .task-completion__box(
+    :style="{ background: (leftTime.changeColorRed || leftTime.changeColorOrange) }"
+    @click="clickTaskDetails"
+    v-on:click="clickIsShowTaskDetailsWindow")
     .task-completion__avatar
       img(:src="`/images/${item.avatar}`" alt="#")
     .task-completion__column
       .task-completion__name
         p {{item.name}}
       .task-completion__data
-        .task-completion__left-time(v-if="!leftTime.changeColorRed") Left: {{leftTime.timeLeftToComplete}}
+        .task-completion__left-time(v-if="!leftTime.changeColorRed && item.status !== 'done'") Left: {{leftTime.timeLeftToComplete}}
+    .task-completion__status-icon(v-if="!leftTime.changeColorRed")
+      div(:class="`task-completion__${iconStatus}`")
   .item-menu__settings
     button.item-menu__button( :class="{'bgNone': !isShowDropdown, 'bgGray': isShowDropdown}" v-on:click="isShowDropdown=!isShowDropdown")
       .item-menu__dots
@@ -15,7 +20,7 @@
         span
         span
   .item-menu(v-if="isShowDropdown")
-    div(@click="clickTaskDetails(); clickShowTaskDetailsWindow(); isShowDropdown = !isShowDropdown" ) EDIT
+    div(@click="clickTaskDetails(); clickIsShowTaskDetailsWindow(); isShowDropdown = !isShowDropdown" ) EDIT
     div( v-if="this.item.status !== status.ToDo && this.item.status !== status.Done && this.item.status !== status.InProgress" @click="changeStatus(status.ToDo)")
       p TO DO
     div( v-if="this.item.status !== status.InProgress && this.item.status !== status.Done" @click="changeStatus(status.InProgress)")
@@ -38,7 +43,7 @@ export default defineComponent({
       type: Object as PropType<TaskInterface>,
       required: true
     },
-    showTaskDetails: {
+    isShowTaskDetails: {
       type: Boolean,
       required: true
     }
@@ -49,6 +54,18 @@ export default defineComponent({
     status: StatusType
   }),
   computed: {
+    iconStatus () {
+      if (this.item.status === 'todo') {
+        return 'to-do'
+      }
+      if (this.item.status === 'inProgress') {
+        return 'in-progress'
+      }
+      if (this.item.status === 'done') {
+        return 'done'
+      }
+      return 0
+    },
     leftTime () {
       const itemTime = this.item.executeBefore.time + '' + this.item.executeBefore.halfDay
       const number = moment(itemTime, ['h:mm A']).format('HH:mm')
@@ -71,14 +88,21 @@ export default defineComponent({
 
       if (days === 0 && days < 1) {
         timeLeftToComplete = hours + ' h. ' + minutes + ' m. '
-        return { timeLeftToComplete, changeColorOrange }
+        if (this.item.status !== 'done') {
+          return {
+            timeLeftToComplete,
+            changeColorOrange
+          }
+        }
       }
       if (days < 0) {
         return { changeColorRed }
       }
       if (days >= 1) {
-        timeLeftToComplete = days + ' d. ' + hours + ' h. ' + minutes + ' m. '
-        return { timeLeftToComplete }
+        timeLeftToComplete = days + ' d. '
+        if (this.item.status !== 'done') {
+          return { timeLeftToComplete }
+        }
       }
 
       return 0
@@ -92,8 +116,8 @@ export default defineComponent({
     clickTaskDetails () {
       this.$emit('taskDetails', this.item)
     },
-    clickShowTaskDetailsWindow () {
-      this.$emit('ShowTaskDetails', this.showTaskDetails)
+    clickIsShowTaskDetailsWindow () {
+      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
     }
   }
 })

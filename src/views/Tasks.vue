@@ -1,9 +1,9 @@
 <template lang="pug">
 task-details-modal(
-  v-bind:item="this.item"
-  v-if="showTaskDetails"
-  :showTaskDetails="showTaskDetails"
-  @showTaskDetails="showTaskDetails = !showTaskDetails"
+  :item="this.item"
+  v-if="isShowTaskDetails"
+  :isShowTaskDetails="isShowTaskDetails"
+  @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
 )
 .tasks__add-modal(v-if="showWindow")
   .tasks__bg(@click="showWindow = !showWindow")
@@ -26,13 +26,13 @@ clean-page
         task(
         v-for="(task, index) in reversedTasks"
         class="list-item"
-        v-bind:task="task"
-        v-bind:index="index"
-        :showTaskDetails="showTaskDetails"
-        @showTaskDetails="showTaskDetails = !showTaskDetails"
+        :task="task"
+        :index="index"
+        :isShowTaskDetails="isShowTaskDetails"
+        @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
         :key="task.id"
         :ref="el => { if (el) divs[index] = el }"
-        v-bind:currentUser="currentUser"
+        :currentUser="currentUser"
         @taskDetails="taskDetails"
         @deleteEvent="deleteEvent"
         )
@@ -62,7 +62,7 @@ export default defineComponent({
       name: '',
       id: Number,
       description: '',
-      showTaskDetails: false,
+      isShowTaskDetails: false,
       item: [],
       showWindow: false
     }
