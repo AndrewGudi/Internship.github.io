@@ -21,11 +21,12 @@
       )
 </template>
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
 import { useStore } from 'vuex'
 import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
+
 export default defineComponent({
   name: 'TaskColumn',
   components: { TaskPlate },
@@ -35,7 +36,7 @@ export default defineComponent({
       required: true
     },
     taskStatus: {
-      type: String,
+      type: String as PropType<StatusType>,
       required: true
     }
   },
@@ -46,13 +47,13 @@ export default defineComponent({
       return tasks.filter((task: TaskInterface) => task.status === status)
     }
     const currentTaskStatus = (taskStatus: StatusType) => {
-      if (taskStatus === 'todo') {
+      if (taskStatus === StatusType.ToDo) {
         return 'To Do'
       }
-      if (taskStatus === 'inProgress') {
+      if (taskStatus === StatusType.InProgress) {
         return 'In Progress'
       }
-      if (taskStatus === 'done') {
+      if (taskStatus === StatusType.Done) {
         return 'Done'
       }
     }

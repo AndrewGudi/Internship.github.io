@@ -22,9 +22,9 @@
               .item-menu__sub-text(v-if="OpenTask === 0" ) Open Tasks
           .item-menu.item-menu__column
             .item-menu__text.title menu
-            a.item-menu__link(href='#') Home
-            a.item-menu__link( href='#') My Tasks
-            a.item-menu__link(href='#') Notification
+            a.item-menu__link(href="#") Home
+            a.item-menu__link( href="#") My Tasks
+            a.item-menu__link(href="#") Notification
               .item-menu__notification {{notification.id}}
 </template>
 <script lang="ts">

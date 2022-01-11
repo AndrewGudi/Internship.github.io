@@ -14,10 +14,10 @@
               span
       .item-header.item-header__end
         .item-header__avatars
-          friend-avatar(v-for="friend of friends" v-if="friends.length = 3" v-bind:friend="friend" :key="friend.id")
+          friend-avatar(v-for="friend of friends" v-if="friends.length = 3" :friend="friend" :key="friend.id")
         .item-header__buttons
-          header-btn(class='header-btn__share') Share
-          header-btn(class='header-btn__chat') Chat
+          header-btn(class="header-btn__share") Share
+          header-btn(class="header-btn__chat") Chat
     .header-top__nav#nav
       .tab-menu
         router-link(to="/")

@@ -3,11 +3,11 @@ clean-page
   .activity__body
     .activity__column
       .activity__day Today
-      activity-post(v-for="post of posts" v-bind:post="post" :key="posts.id")/
+      activity-post(v-for="post of posts" :post="post" :key="posts.id")/
       .activity__row
         .item-post__icon
         .activity__images
-          activity-images(v-for="image of images" v-bind:image="image" :key="image.id" @imageId='imageId')/
+          activity-images(v-for="image of images" :image="image" :key="image.id" @imageId="imageId")/
         .item-post__time
 </template>
 <script lang="ts">

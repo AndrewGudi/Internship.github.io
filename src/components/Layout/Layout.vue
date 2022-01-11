@@ -20,7 +20,7 @@ sidebar(v-if="showMenu"
       @click="showWindow = !showWindow"
     ) No
 .header
-  header-top(:showMenu='showMenu' @showMenu="showMenu = !showMenu")
+  header-top(:showMenu="showMenu" @showMenu="showMenu = !showMenu")
   header-content
 </template>
 

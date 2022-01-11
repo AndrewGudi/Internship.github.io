@@ -75,7 +75,7 @@ export default defineComponent({
   methods: {
     ...mapActions(['changeObjectDetails']),
     clickShowTaskDetailsWindow () {
-      this.$emit('isShowTaskDetails', this.showTaskDetails)
+      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
     },
     changeTask () {
       this.changeName = this.item.name

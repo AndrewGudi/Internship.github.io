@@ -1,7 +1,7 @@
 <template lang="pug">
 .item-menu.item-menu__flex.item-menu__background
   .item-menu__avatar
-    img(:src='`/images/${currentUser.avatarka}`' alt="#")/
+    img(:src="`/images/${currentUser.avatarka}`" alt="#")/
   .item-menu__name
     .item-menu__text {{ currentUser.firstname }} {{ currentUser.lastname }}
     .item-menu__text {{currentUser.user}}

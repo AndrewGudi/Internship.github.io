@@ -90,7 +90,7 @@ export default defineComponent({
       if (search && !range) {
         return tasks.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
       }
-      if (range && !search) {
+      if ((range && !search) || (range && search)) {
         for (let j = 0; j < resultDate.length; j++) {
           tasks.forEach((task: TaskInterface) => {
             if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
@@ -98,20 +98,15 @@ export default defineComponent({
             }
           })
         }
-        // eslint-disable-next-line
-        return taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
-      }
-      if (range && search) {
-        for (let j = 0; j < resultDate.length; j++) {
-          tasks.forEach((task: TaskInterface) => {
-            if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
-              taskFilterDate.push(task)
-            }
-          })
+        if (range && !search) {
+          // eslint-disable-next-line
+          return taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
         }
-        // eslint-disable-next-line
-        taskFilterDate = taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
-        return taskFilterDate.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
+        if (range && search) {
+          // eslint-disable-next-line
+          taskFilterDate = taskFilterDate.filter((el:any, id:any) => taskFilterDate.indexOf(el) === id)
+          return taskFilterDate.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
+        }
       }
     }
     return {
