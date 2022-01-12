@@ -42,7 +42,7 @@ export default defineComponent({
   },
   setup (props, context) {
     const store = useStore()
-    const tasks = store.state.tasks
+    const tasks = store.state.moduleTasks.tasks
     const getStatus = (status: StatusType) => {
       return tasks.filter((task: TaskInterface) => task.status === status)
     }

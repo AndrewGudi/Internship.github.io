@@ -1,23 +1,23 @@
 <template lang="pug">
 task-details-modal(
-  :item="this.item"
-  v-if="isShowTaskDetails"
-  :isShowTaskDetails="isShowTaskDetails"
-  @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
+  :item="this.data.item"
+  v-if="data.isShowTaskDetails"
+  :isShowTaskDetails="data.isShowTaskDetails"
+  @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
 )
-.tasks__add-modal(v-if="showWindow")
-  .tasks__bg(@click="showWindow = !showWindow")
+.tasks__add-modal(v-if="data.showWindow")
+  .tasks__bg(@click="data.showWindow = !data.showWindow")
   task-add-modal(
-    @showWindow="showWindow = !showWindow"
-    v-model:showWindow="showWindow"
+    @showWindow="data.showWindow = !data.showWindow"
+    v-model:showWindow="data.showWindow"
   )
 clean-page
   .tasks__column
     .tasks__row
       .tasks__open-tasks Open Tasks
       .tasks__buttons
-        button.tasks__input-button-add(@click="scrollToTop" v-if="tasks.length > 4" ) UP
-        button.tasks__input-button-add(:class="{'active': showWindow}" @click="showWindow = !showWindow") ADD
+        button.tasks__input-button-add(v-if="tasks.length > 4") UP
+        button.tasks__input-button-add(:class="{'active': data.showWindow}" @click="data.showWindow = !data.showWindow") ADD
     .tasks__completed(v-if="tasks.length===0") Sorry, but all tasks have already been completed.
     .tasks__new-tasks#container
       transition-group(
@@ -28,8 +28,8 @@ clean-page
         class="list-item"
         :task="task"
         :index="index"
-        :isShowTaskDetails="isShowTaskDetails"
-        @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
+        :isShowTaskDetails="data.isShowTaskDetails"
+        @isShowTaskDetails="data.isShowTaskDetails = !data. isShowTaskDetails"
         :key="task.id"
         :ref="el => { if (el) divs[index] = el }"
         :currentUser="currentUser"
@@ -38,9 +38,9 @@ clean-page
         )
 </template>
 <script lang="ts">
-import { ref, onMounted, defineComponent } from 'vue'
+import { ref, onMounted, defineComponent, computed, reactive } from 'vue'
 import Task from '@/components/Layout/Content/Tasks/Task.vue'
-import { mapState } from 'vuex'
+import { useStore } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import 'animate.css'
 import TaskAddModal from '@/components/Layout/Content/Tasks/TaskAddModal.vue'
@@ -55,8 +55,10 @@ export default defineComponent({
     CleanPage,
     Task
   },
-  data () {
-    return {
+  setup () {
+    const store = useStore()
+    const tasks = store.state.moduleTasks.tasks
+    const data = reactive({
       errorName: '',
       errorDescription: '',
       name: '',
@@ -65,9 +67,7 @@ export default defineComponent({
       isShowTaskDetails: false,
       item: [],
       showWindow: false
-    }
-  },
-  setup () {
+    })
     // eslint-disable-next-line
     const divs = ref<any[]>([])
     onMounted(() => {
@@ -82,34 +82,29 @@ export default defineComponent({
         }, 1000 * (index + 1))
       })
     })
-    return {
-      divs
-    }
-  },
-  computed: {
-    ...mapState(['tasks', 'currentUser']),
-    reversedTasks (): string {
-      return this.tasks.slice().reverse()
-    }
-  },
-  methods: {
-    scrollToTop: function () {
-      const container = this.$el.querySelector('#container')
-      container.scrollTop = !container.scrollHeight
-    },
-    onClickAway (event:Event) {
+    const onClickAway = (event:Event) => {
       if (event) {
-        this.showWindow = !this.showWindow
+        data.showWindow = !data.showWindow
       }
-    },
-    deleteEvent: function (index: number) {
+    }
+    const deleteEvent = (index: number) => {
       if (index > -1) {
-        this.tasks.splice(this.tasks.length - 1 - index, 1)
+        tasks.splice(tasks.length - 1 - index, 1)
       }
-    },
+    }
     // eslint-disable-next-line
-    taskDetails (item: any) {
-      this.item = item
+    const taskDetails = (item: any) => {
+      data.item = item
+    }
+    return {
+      divs,
+      data,
+      onClickAway,
+      deleteEvent,
+      taskDetails,
+      tasks: computed(() => tasks),
+      currentUser: computed(() => store.state.currentUser),
+      reversedTasks: computed(() => tasks.slice().reverse())
     }
   }
 })

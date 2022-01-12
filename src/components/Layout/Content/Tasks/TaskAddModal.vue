@@ -19,7 +19,7 @@ form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
 <script lang="ts">
 import { StatusType } from '@/constants/enumStatusType'
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { DatePicker } from 'v-calendar'
 import CalendarInput from '@/components/Layout/Content/CalendarInput.vue'
 
@@ -47,7 +47,10 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(['tasks', 'currentUser'])
+    ...mapState(['currentUser']),
+    ...mapGetters({
+      tasks: 'getTasks'
+    })
   },
   methods: {
     showWindowModal () {

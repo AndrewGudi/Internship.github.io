@@ -11,10 +11,10 @@ clean-page
         .item-post__time
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import ActivityImages from '@/components/Layout/Content/Activity/ActivityImages.vue'
 import ActivityPost from '@/components/Layout/Content/Activity/ActivityPost.vue'
-import { mapActions, mapState } from 'vuex'
+import { useStore } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 export default defineComponent({
   components: {
@@ -22,22 +22,14 @@ export default defineComponent({
     ActivityPost,
     ActivityImages
   },
-  data () {
+  setup () {
+    const store = useStore()
     return {
-      idNotification: { id: 3 }
+      notification: computed(() => store.state.notification),
+      images: computed(() => store.state.images),
+      posts: computed(() => store.state.posts),
+      imageId: (id: number) => store.dispatch('loadNotification', id)
     }
-  },
-  computed: {
-    ...mapState(['notification', 'images', 'posts'])
-  },
-  methods: {
-    ...mapActions(['loadNotification']),
-    imageId (id: number) {
-      this.idNotification.id = id
-    }
-  },
-  created () {
-    this.loadNotification(this.idNotification)
   }
 })
 </script>

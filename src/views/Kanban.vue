@@ -57,7 +57,7 @@ export default defineComponent({
   },
   setup () {
     const store = useStore()
-    const tasks = store.state.tasks
+    const tasks = store.state.moduleTasks.tasks
     const state = reactive({
       range: '',
       taskFilter: [],
