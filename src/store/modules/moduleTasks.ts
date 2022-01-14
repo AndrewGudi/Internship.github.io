@@ -2,6 +2,7 @@ import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
 
 export default {
+  // eslint-disable-next-line
   state: () => ({
     tasks: [
       { status: StatusType.ToDo, id: '0', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Who would you be in the film of your life?', postDate: { date: '1/1/2022', time: '6:02', halfDay: 'PM' }, executeBefore: { date: '1/3/2022', time: '6:02', halfDay: 'PM' } },
@@ -18,29 +19,45 @@ export default {
     ]
   }),
   mutations: {
-    changeObjectStatus (state: any, { id, status }: TaskInterface) {
+    // eslint-disable-next-line
+    changeObjectStatus (state: any, { id, status }: TaskInterface): void {
       const found = state.tasks.find((item:TaskInterface) => item.id === id)
       if (found) {
         found.status = status
       }
     },
-    changeObjectDetails (state: any, { id, name, description }: TaskInterface) {
+    // eslint-disable-next-line
+    changeObjectDetails (state: any, { id, name, description }: TaskInterface): void {
       const found = state.tasks.find((item:TaskInterface) => item.id === id)
       if (found) {
         found.name = name
         found.description = description
       }
+    },
+    // eslint-disable-next-line
+    addClassColorTimeTask (state: any, { id, colors }: TaskInterface): void {
+      const found = state.tasks.find((item:TaskInterface) => item.id === id)
+      if (found) {
+        found.colors = colors
+      }
     }
   },
   actions: {
-    async changeObjectStatus (context: any, { id, status }: TaskInterface) {
+    // eslint-disable-next-line
+    changeObjectStatus (context: any, { id, status }: TaskInterface): void {
       context.commit('changeObjectStatus', { id: id, status: status })
     },
-    async changeObjectDetails (context: any, { id, name, description }: TaskInterface) {
+    // eslint-disable-next-line
+    changeObjectDetails (context: any, { id, name, description }: TaskInterface): void {
       context.commit('changeObjectDetails', { id: id, name: name, description: description })
+    },
+    // eslint-disable-next-line
+    addClassColorTimeTask (context: any, { id, colors }: TaskInterface): void {
+      context.commit('addClassColorTimeTask', { id: id, colors: colors })
     }
   },
   getters: {
+    // eslint-disable-next-line
     getTasks: (state: any) => state.tasks
   }
 }

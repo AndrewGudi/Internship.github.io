@@ -1,7 +1,7 @@
 <template lang="pug">
 .list-group-item
   .task-completion__box(
-    :style="{ background: (leftTime.changeColorRed || leftTime.changeColorOrange) }"
+    :class="leftTime.colors"
     @click="clickTaskDetails"
     v-on:click="clickIsShowTaskDetailsWindow")
     .task-completion__avatar
@@ -10,30 +10,30 @@
       .task-completion__name
         p {{item.name}}
       .task-completion__data
-        .task-completion__left-time(v-if="!leftTime.changeColorRed && item.status !== 'done'") Left: {{leftTime.timeLeftToComplete}}
-    .task-completion__status-icon(v-if="!leftTime.changeColorRed")
+        .task-completion__left-time(v-if="!(leftTime.colors === 'red') && item.status !== 'done'") Left: {{leftTime.timeLeftToComplete}}
+    .task-completion__status-icon(v-if="leftTime.colors !== 'red'")
       div(:class="`task-completion__${iconStatus}`")
   .item-menu__settings
-    button.item-menu__button( :class="{'bgNone': !isShowDropdown, 'bgGray': isShowDropdown}" v-on:click="isShowDropdown=!isShowDropdown")
+    button.item-menu__button( :class="{'bgNone': !data.isShowDropdown, 'bgGray': data.isShowDropdown}" v-on:click="data.isShowDropdown=!data.isShowDropdown")
       .item-menu__dots
         span
         span
         span
-  .item-menu(v-if="isShowDropdown")
-    div(@click="clickTaskDetails(); clickIsShowTaskDetailsWindow(); isShowDropdown = !isShowDropdown" ) EDIT
-    div( v-if="this.item.status !== status.ToDo && this.item.status !== status.Done && this.item.status !== status.InProgress" @click="changeStatus(status.ToDo)")
+  .item-menu(v-if="data.isShowDropdown")
+    div(@click="clickTaskDetails(); clickIsShowTaskDetailsWindow(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
+    div( v-if="this.item.status !== data.status.ToDo && this.item.status !== data.status.Done && this.item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
       p TO DO
-    div( v-if="this.item.status !== status.InProgress && this.item.status !== status.Done" @click="changeStatus(status.InProgress)")
+    div( v-if="this.item.status !== data.status.InProgress && this.item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")
       p IN PROGRESS
-    div( v-if="this.item.status !== status.Done" @click="changeStatus(status.Done)")
+    div( v-if="this.item.status !== data.status.Done" @click="changeStatus(data.status.Done).then()")
       p DONE
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType, reactive } from 'vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
-import { mapActions } from 'vuex'
+import { mapActions, useStore } from 'vuex'
 import moment from 'moment'
 
 export default defineComponent({
@@ -48,33 +48,39 @@ export default defineComponent({
       required: true
     }
   },
-  data: () => ({
-    dateNow: moment(new Date()).toDate().getTime(),
-    isShowDropdown: false,
-    status: StatusType
-  }),
-  computed: {
-    iconStatus () {
-      if (this.item.status === 'todo') {
+  setup (props) {
+    const store = useStore()
+    const data = reactive({
+      dateNow: moment(new Date()).toDate().getTime(),
+      isShowDropdown: false,
+      status: StatusType
+    })
+    const iconStatus = computed(() => {
+      if (props.item.status === 'todo') {
         return 'to-do'
       }
-      if (this.item.status === 'inProgress') {
+      if (props.item.status === 'inProgress') {
         return 'in-progress'
       }
-      if (this.item.status === 'done') {
+      if (props.item.status === 'done') {
         return 'done'
       }
       return 0
-    },
-    leftTime () {
-      const itemTime = this.item.executeBefore.time + '' + this.item.executeBefore.halfDay
+    })
+    // eslint-disable-next-line
+    const leftTime:any = computed(() => {
+      let colors = ''
+      // eslint-disable-next-line
+      const addClass = (colors: any) => store.dispatch('addClassColorTimeTask', { id: props.item.id, colors: colors })
+      const itemTime = props.item.executeBefore.time + '' + props.item.executeBefore.halfDay
       const number = moment(itemTime, ['h:mm A']).format('HH:mm')
       // eslint-disable-next-line
-      const executeBeforeDate: any = moment(new Date(this.item.executeBefore.date + ',' + number)).toDate().getTime()
+      const executeBeforeDate: any = moment(new Date(props.item.executeBefore.date + ',' + number)).toDate().getTime()
       // eslint-disable-next-line
-      const dateNow:any = this.dateNow
+      const dateNow:any = data.dateNow
       const changeColorRed = 'red'
       const changeColorOrange = 'orange'
+      const changeColorGray = 'grizzle'
       let timeLeftToComplete = ''
 
       let seconds = Math.floor((executeBeforeDate - (dateNow)) / 1000)
@@ -88,31 +94,59 @@ export default defineComponent({
 
       if (days === 0 && days < 1) {
         timeLeftToComplete = hours + ' h. ' + minutes + ' m. '
-        if (this.item.status !== 'done') {
+        colors = changeColorGray
+        if (props.item.status !== 'done') {
+          colors = changeColorOrange
+          addClass(colors)
           return {
-            timeLeftToComplete,
-            changeColorOrange
+            colors,
+            addClass,
+            timeLeftToComplete
           }
+        }
+        return {
+          colors
         }
       }
       if (days < 0) {
-        return { changeColorRed }
+        colors = changeColorRed
+        addClass(colors)
+        return {
+          addClass,
+          colors
+        }
       }
       if (days >= 1) {
         timeLeftToComplete = days + ' d. '
-        if (this.item.status !== 'done') {
-          return { timeLeftToComplete }
+        colors += changeColorGray
+        addClass(colors)
+        if (props.item.status !== 'done') {
+          return {
+            colors,
+            timeLeftToComplete,
+            addClass
+          }
+        }
+        return {
+          colors,
+          addClass,
+          leftTime
         }
       }
-
       return 0
+    })
+    return {
+      leftTime,
+      iconStatus,
+      data,
+      changeStatus: (status: StatusType) => store.dispatch('changeObjectStatus', { id: props.item.id, status: status })
     }
   },
+  computed: {
+  },
   methods: {
-    ...mapActions(['changeObjectStatus']),
-    changeStatus (status: StatusType) {
-      this.changeObjectStatus({ id: this.item.id, status: status })
-    },
+    ...mapActions(['changeObjectStatus', 'addClassColorTimeTask']),
+
     clickTaskDetails () {
       this.$emit('taskDetails', this.item)
     },
@@ -188,5 +222,14 @@ export default defineComponent({
 }
 .bgGray{
   background: white;
+}
+.red{
+  background: red;
+}
+.orange{
+  background: orange;
+}
+.grizzle{
+  background: #EAEAEA;
 }
 </style>

@@ -1,6 +1,6 @@
 <template lang="pug">
 task-details-modal(
-  :item="this.data.item"
+  :item="data.item"
   v-if="data.isShowTaskDetails"
   :isShowTaskDetails="data.isShowTaskDetails"
   @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
