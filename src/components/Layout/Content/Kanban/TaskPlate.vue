@@ -27,6 +27,7 @@
       p IN PROGRESS
     div( v-if="this.item.status !== data.status.Done" @click="changeStatus(data.status.Done).then()")
       p DONE
+    div(@click=" data.isShowDropdown = !data.isShowDropdown" ) DELETE
 </template>
 
 <script lang="ts">

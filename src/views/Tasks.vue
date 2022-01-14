@@ -87,11 +87,6 @@ export default defineComponent({
         data.showWindow = !data.showWindow
       }
     }
-    const deleteEvent = (index: number) => {
-      if (index > -1) {
-        tasks.splice(tasks.length - 1 - index, 1)
-      }
-    }
     // eslint-disable-next-line
     const taskDetails = (item: any) => {
       data.item = item
@@ -100,7 +95,7 @@ export default defineComponent({
       divs,
       data,
       onClickAway,
-      deleteEvent,
+      deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
       taskDetails,
       tasks: computed(() => tasks),
       currentUser: computed(() => store.state.currentUser),

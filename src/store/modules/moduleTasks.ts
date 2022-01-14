@@ -40,6 +40,18 @@ export default {
       if (found) {
         found.colors = colors
       }
+    },
+    // eslint-disable-next-line
+    addItem (state: any, item:any): void {
+      const lastItem = state.tasks[state.tasks.length - 1].id
+      const addId = item
+      addId.id = String(Number(lastItem) + 1)
+      state.tasks.push(addId)
+    },
+    // eslint-disable-next-line
+    removeItem (state: any, { id }: TaskInterface): void {
+      const index = state.tasks.findIndex((item:TaskInterface) => item.id === id)
+      state.tasks.splice(index, 1)
     }
   },
   actions: {
@@ -54,6 +66,14 @@ export default {
     // eslint-disable-next-line
     addClassColorTimeTask (context: any, { id, colors }: TaskInterface): void {
       context.commit('addClassColorTimeTask', { id: id, colors: colors })
+    },
+    // eslint-disable-next-line
+    addItem (context: any, item: any): void {
+      context.commit('addItem', item)
+    },
+    // eslint-disable-next-line
+    removeItem (context: any, { id }: TaskInterface): void {
+      context.commit('removeItem', { id: id })
     }
   },
   getters: {
