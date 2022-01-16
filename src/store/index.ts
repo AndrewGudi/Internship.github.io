@@ -1,7 +1,14 @@
 import { createStore } from 'vuex'
 import moduleTasks from '@/store/modules/moduleTasks'
+import VuexPersist from 'vuex-persist'
+
+const vuexPersist = new VuexPersist({
+  key: 'my-app',
+  storage: window.localStorage
+})
 
 export default createStore({
+  plugins: [vuexPersist.plugin],
   state: {
     images: [
       {

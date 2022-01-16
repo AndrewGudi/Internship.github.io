@@ -18,7 +18,7 @@ form.tasks__input(@submit="checkForm" v-if="showWindow" autocomplete="on")
 
 <script lang="ts">
 import { StatusType } from '@/constants/enumStatusType'
-import { computed, defineComponent, reactive } from 'vue'
+import { computed, defineComponent, onMounted, reactive } from 'vue'
 import { mapActions, useStore } from 'vuex'
 import { DatePicker } from 'v-calendar'
 import CalendarInput from '@/components/Layout/Content/CalendarInput.vue'
@@ -50,7 +50,7 @@ export default defineComponent({
       name: '',
       description: '',
       // eslint-disable-next-line
-      lastItem: [],
+      localTasks: [],
       statusType: StatusType
     })
     const tasks = store.state.tasks

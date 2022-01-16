@@ -24,7 +24,7 @@ clean-page
         name="list"
         )
         task(
-        v-for="(task, index) in reversedTasks"
+        v-for="(task, index) in userList"
         class="list-item"
         :task="task"
         :index="index"
@@ -58,6 +58,7 @@ export default defineComponent({
   setup () {
     const store = useStore()
     const tasks = store.state.moduleTasks.tasks
+    const userList = ref(tasks)
     const data = reactive({
       errorName: '',
       errorDescription: '',
@@ -99,7 +100,7 @@ export default defineComponent({
       taskDetails,
       tasks: computed(() => tasks),
       currentUser: computed(() => store.state.currentUser),
-      reversedTasks: computed(() => tasks.slice().reverse())
+      userList
     }
   }
 })
