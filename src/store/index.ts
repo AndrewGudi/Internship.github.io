@@ -13,19 +13,23 @@ export default createStore({
     images: [
       {
         id: '0',
-        src: 'photo1.png'
+        src: 'photo1.png',
+        name: 'city'
       },
       {
         id: '1',
-        src: 'photo2.png'
+        src: 'photo2.png',
+        name: 'see'
       },
       {
         id: '2',
-        src: 'photo3.png'
+        src: 'photo3.png',
+        name: 'forest'
       },
       {
         id: '3',
-        src: 'photo4.png'
+        src: 'photo4.png',
+        name: 'sea spit'
       }
     ],
     posts: [
