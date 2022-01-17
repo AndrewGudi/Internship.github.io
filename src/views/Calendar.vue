@@ -104,7 +104,7 @@ export default defineComponent({
           description: task.description,
           postDate: { date: task.date, time: task.time, halfDay: task.halfDay },
           executeBefore: { date: task.date, time: task.time, halfDay: task.halfDay },
-          dates: new Date(task.executeBefore.date)
+          dates: new Date(task.postDate.date)
         })
       })
       return data.tasksForCalendar
