@@ -21,21 +21,22 @@
         span
   .item-menu(v-if="data.isShowDropdown")
     div(@click="clickTaskDetails(); clickIsShowTaskDetailsWindow(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
-    div( v-if="this.item.status !== data.status.ToDo && this.item.status !== data.status.Done && this.item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
+    div( v-if="item.status !== data.status.ToDo && item.status !== data.status.Done && item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
       p TO DO
-    div( v-if="this.item.status !== data.status.InProgress && this.item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")
+    div( v-if="item.status !== data.status.InProgress && item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")
       p IN PROGRESS
-    div( v-if="this.item.status !== data.status.Done" @click="changeStatus(data.status.Done).then()")
+    div( v-if="item.status !== data.status.Done" @click="changeStatus(data.status.Done).then()")
       p DONE
     div(@click=" data.isShowDropdown = !data.isShowDropdown" ) DELETE
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, reactive } from 'vue'
+import { computed, defineComponent, PropType, reactive, toRefs } from 'vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
 import { mapActions, useStore } from 'vuex'
 import moment from 'moment'
+import taskLeftTime from '@/composables/taskLeftTime'
 
 export default defineComponent({
   name: 'TaskPlate',
@@ -56,6 +57,8 @@ export default defineComponent({
       isShowDropdown: false,
       status: StatusType
     })
+    const { item } = toRefs(props)
+    const { leftTime } = taskLeftTime(item)
     const iconStatus = computed(() => {
       if (props.item.status === 'todo') {
         return 'to-do'
@@ -65,74 +68,6 @@ export default defineComponent({
       }
       if (props.item.status === 'done') {
         return 'done'
-      }
-      return 0
-    })
-    // eslint-disable-next-line
-    const leftTime:any = computed(() => {
-      let colors = ''
-      // eslint-disable-next-line
-      const addClass = (colors: any) => store.dispatch('addClassColorTimeTask', { id: props.item.id, colors: colors })
-      const itemTime = props.item.executeBefore.time + '' + props.item.executeBefore.halfDay
-      const number = moment(itemTime, ['h:mm A']).format('HH:mm')
-      // eslint-disable-next-line
-      const executeBeforeDate: any = moment(new Date(props.item.executeBefore.date + ',' + number)).toDate().getTime()
-      // eslint-disable-next-line
-      const dateNow:any = data.dateNow
-      const changeColorRed = 'red'
-      const changeColorOrange = 'orange'
-      const changeColorGray = 'grizzle'
-      let timeLeftToComplete = ''
-
-      let seconds = Math.floor((executeBeforeDate - (dateNow)) / 1000)
-      let minutes = Math.floor(seconds / 60)
-      let hours = Math.floor(minutes / 60)
-      const days = Math.floor(hours / 24)
-
-      hours = hours - (days * 24)
-      minutes = minutes - (days * 24 * 60) - (hours * 60)
-      seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60)
-
-      if (days === 0 && days < 1) {
-        timeLeftToComplete = hours + ' h. ' + minutes + ' m. '
-        colors = changeColorGray
-        if (props.item.status !== 'done') {
-          colors = changeColorOrange
-          addClass(colors)
-          return {
-            colors,
-            addClass,
-            timeLeftToComplete
-          }
-        }
-        return {
-          colors
-        }
-      }
-      if (days < 0) {
-        colors = changeColorRed
-        addClass(colors)
-        return {
-          addClass,
-          colors
-        }
-      }
-      if (days >= 1) {
-        timeLeftToComplete = days + ' d. '
-        colors += changeColorGray
-        addClass(colors)
-        if (props.item.status !== 'done') {
-          return {
-            colors,
-            timeLeftToComplete,
-            addClass
-          }
-        }
-        return {
-          colors,
-          addClass,
-          leftTime
-        }
       }
       return 0
     })

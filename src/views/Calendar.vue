@@ -17,12 +17,13 @@ clean-page
               p(@click="taskDetails(item.key); data.isShowTaskDetails = !data.isShowTaskDetails") {{item.customData.title}}
 </template>
 <script>
-import { computed, defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import ComingSoon from '@/components/Layout/Content/ComingSoon.vue'
 import { useStore } from 'vuex'
 import TaskDetailsModal from '../components/Layout/Content/Tasks/TaskDetailsModal'
-import moment from 'moment'
+import taskLeftTime from '../composables/taskLeftTime'
+import taskCalendarInterface from '../composables/taskCalendarInterface'
 
 export default defineComponent({
   components: {
@@ -34,8 +35,6 @@ export default defineComponent({
     const store = useStore()
     const tasks = store.state.moduleTasks.tasks
     const data = reactive({
-      dateNow: moment(new Date()).toDate().getTime(),
-      tasksForCalendar: [],
       masks: {
         weekdays: 'WWW'
       },
@@ -43,80 +42,16 @@ export default defineComponent({
       isShowEdit: true,
       item: []
     })
-    const leftTime = (task) => {
-      let colors = ''
-      const addClass = (colors) => store.dispatch('addClassColorTimeTask', {
-        id: task.id,
-        colors: colors
-      })
-      const itemTime = task.executeBefore.time + '' + task.executeBefore.halfDay
-      const number = moment(itemTime, ['h:mm A']).format('HH:mm')
-      const executeBeforeDate = moment(new Date(task.executeBefore.date + ',' + number)).toDate().getTime()
-      const dateNow = data.dateNow
-      const changeColorRed = 'red'
-      const changeColorOrange = 'orange'
-      const changeColorGray = 'grizzle'
-
-      let seconds = Math.floor((executeBeforeDate - (dateNow)) / 1000)
-      let minutes = Math.floor(seconds / 60)
-      let hours = Math.floor(minutes / 60)
-      const days = Math.floor(hours / 24)
-
-      hours = hours - (days * 24)
-      minutes = minutes - (days * 24 * 60) - (hours * 60)
-      seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60)
-
-      if (days === 0 && days < 1) {
-        colors = changeColorOrange
-        addClass(colors)
-        return {
-          addClass
-        }
-      }
-      if (days < 0) {
-        colors = changeColorRed
-        addClass(colors)
-        return {
-          addClass
-        }
-      }
-      if (days >= 1) {
-        colors += changeColorGray
-        addClass(colors)
-        return {
-          addClass
-        }
-      }
-    }
-    const attributes = computed(() => {
-      tasks.forEach((task) => {
-        leftTime(task)
-        data.tasksForCalendar.push({
-          id: task.id,
-          customData: {
-            title: task.name,
-            class: task.colors
-          },
-          avatar: task.avatar,
-          firstname: task.firstname,
-          lastname: task.lastname,
-          name: task.name,
-          description: task.description,
-          postDate: { date: task.date, time: task.time, halfDay: task.halfDay },
-          executeBefore: { date: task.date, time: task.time, halfDay: task.halfDay },
-          dates: new Date(task.postDate.date)
-        })
-      })
-      return data.tasksForCalendar
+    tasks.forEach((task) => {
+      const item = ref(task)
+      const { leftTime } = taskLeftTime(item)
+      return leftTime.value
     })
-    const taskDetails = (item) => {
-      data.item = tasks[item]
-    }
+    const { attributes, taskDetails } = taskCalendarInterface(tasks, data)
     return {
       data,
       attributes,
-      taskDetails,
-      tasks: computed(() => tasks)
+      taskDetails
     }
   }
 })
