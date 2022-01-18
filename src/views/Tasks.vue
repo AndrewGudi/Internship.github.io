@@ -1,6 +1,7 @@
 <template lang="pug">
 task-details-modal(
   :item="data.item"
+  :isShowEdit="data.isShowEdit"
   v-if="data.isShowTaskDetails"
   :isShowTaskDetails="data.isShowTaskDetails"
   @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
@@ -66,6 +67,7 @@ export default defineComponent({
       id: Number,
       description: '',
       isShowTaskDetails: false,
+      isShowEdit: false,
       item: [],
       showWindow: false
     })

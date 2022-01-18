@@ -1,6 +1,7 @@
 <template lang="pug">
 task-details-modal(
   :item="state.taskDetailsItem"
+  :isShowEdit="state.isShowEdit"
   v-if="state.isShowTaskDetails"
   :isShowTaskDetails="state.isShowTaskDetails"
   @isShowTaskDetails="state.isShowTaskDetails = !state.isShowTaskDetails"
@@ -67,7 +68,8 @@ export default defineComponent({
       taskDetailsItem: [],
       isShowTaskDetails: false,
       isShowCalendar: false,
-      isShowSearch: true
+      isShowSearch: true,
+      isShowEdit: false
     })
     // eslint-disable-next-line
     const searchTask = (search: string, range: any) => {
