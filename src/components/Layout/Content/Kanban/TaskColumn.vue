@@ -40,9 +40,9 @@ export default defineComponent({
       required: true
     }
   },
-  setup: function () {
+  setup (props, context) {
     const store = useStore()
-    const tasks = store.state.tasks
+    const tasks = store.state.moduleTasks.tasks
     const getStatus = (status: StatusType) => {
       return tasks.filter((task: TaskInterface) => task.status === status)
     }
@@ -58,7 +58,7 @@ export default defineComponent({
       }
     }
     // eslint-disable-next-line
-    const startDrag = (evt: any, item: TaskInterface) => {
+    const startDrag = (evt: any, item: any) => {
       evt.dataTransfer.dropEffect = 'move'
       evt.dataTransfer.effectAllowed = 'move'
       evt.dataTransfer.setData('itemID', item.id)
@@ -71,23 +71,23 @@ export default defineComponent({
         item.status = status
       }
     }
+    // eslint-disable-next-line
+    const clickTaskDetails = (item: any) => {
+      context.emit('taskDetails', item)
+    }
+    // eslint-disable-next-line
+    const clickShowTaskDetails = (isShowTaskDetails: any) => {
+      context.emit('isShowTaskDetails', isShowTaskDetails)
+    }
     return {
       getStatus,
       currentTaskStatus,
       startDrag,
       onDrop,
+      clickTaskDetails,
+      clickShowTaskDetails,
       tasks: computed(() => store.state.tasks),
       currentUser: computed(() => store.state.currentUser)
-    }
-  },
-  methods: {
-    // eslint-disable-next-line
-    clickTaskDetails (item: any) {
-      this.$emit('taskDetails', item)
-    },
-    // eslint-disable-next-line
-    clickShowTaskDetails (isShowTaskDetails: any) {
-      this.$emit('isShowTaskDetails', isShowTaskDetails)
     }
   }
 })

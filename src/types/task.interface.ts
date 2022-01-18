@@ -18,4 +18,5 @@ export interface TaskInterface{
   halfDay: string
   executeBefore: Data
   postDate: Data
+  colors: string
 }

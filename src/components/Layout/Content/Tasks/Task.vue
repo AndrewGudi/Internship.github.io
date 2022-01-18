@@ -48,7 +48,7 @@ export default defineComponent({
   },
   methods: {
     deleteEvent () {
-      this.$emit('deleteEvent', this.index)
+      this.$emit('deleteEvent', this.task.id)
     },
     clickTaskDetails () {
       this.$emit('taskDetails', this.task)

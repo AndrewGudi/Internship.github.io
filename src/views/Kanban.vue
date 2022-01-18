@@ -1,43 +1,43 @@
 <template lang="pug">
 task-details-modal(
-  :item="this.item"
-  v-if="isShowTaskDetails"
-  :isShowTaskDetails="isShowTaskDetails"
-  @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
+  :item="state.taskDetailsItem"
+  v-if="state.isShowTaskDetails"
+  :isShowTaskDetails="state.isShowTaskDetails"
+  @isShowTaskDetails="state.isShowTaskDetails = !state.isShowTaskDetails"
 )
 .task-completion__input-block(v-click-away="onClickAwayShowSearch")
   .task-completion__input
-    input( type="text" v-model="search" @click="isShowSearchModal")
-    button.task-completion__calendar-open(@click="isShowCalendar=!isShowCalendar")
-    .task-completion__scroll.search(v-if="(search || range || range && search) && isShowSearch")
+    input( type="text" v-model="state.search" @click="isShowSearchModal")
+    button.task-completion__calendar-open(@click="state.isShowCalendar=!state.isShowCalendar")
+    .task-completion__scroll.search(v-if="(state.search || state.range || state.range && state.search) && state.isShowSearch")
       task-plate.searchTask(
         :item="item"
-        v-for="item in searchTask(search, range)"
+        v-for="item in searchTask(state.search, state.range)"
         :key="item.id"
-        :isShowTaskDetails="isShowTaskDetails"
-        @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
+        :isShowTaskDetails="state.isShowTaskDetails"
+        @isShowTaskDetails="state.isShowTaskDetails = !state.isShowTaskDetails"
         @taskDetails="taskDetails"
       )
-    .calendar(v-if="isShowCalendar" v-click-away="onClickAway")
+    .calendar(v-if="state.isShowCalendar" v-click-away="onClickAway")
       v-date-picker(
         :value="null"
-        v-model="range"
+        v-model="state.range"
         color="red"
         is-white
         is-range
       )
 .task-completion
   .task-completion__body
-    task-column(v-for="taskStatus in status"
+    task-column(v-for="taskStatus in state.status"
     :taskStatus="taskStatus"
-    :isShowTaskDetails="isShowTaskDetails"
-    @isShowTaskDetails="isShowTaskDetails = !isShowTaskDetails"
+    :isShowTaskDetails="state.isShowTaskDetails"
+    @isShowTaskDetails="state.isShowTaskDetails = !state.isShowTaskDetails"
     @taskDetails="taskDetails"
     )
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
@@ -55,22 +55,20 @@ export default defineComponent({
     TaskDetailsModal,
     CleanPage
   },
-  data () {
-    return {
+  setup () {
+    const store = useStore()
+    const tasks = store.state.moduleTasks.tasks
+    const state = reactive({
       range: '',
       taskFilter: [],
       search: '',
       controlOnStart: true,
       status: StatusType,
-      item: [],
+      taskDetailsItem: [],
       isShowTaskDetails: false,
       isShowCalendar: false,
       isShowSearch: true
-    }
-  },
-  setup () {
-    const store = useStore()
-    const tasks = store.state.tasks
+    })
     // eslint-disable-next-line
     const searchTask = (search: string, range: any) => {
       const startDate = Date.parse(range.start)
@@ -109,33 +107,36 @@ export default defineComponent({
         }
       }
     }
-    return {
-      searchTask
-    }
-  },
-  methods: {
-    isShowSearchModal () {
-      if (!this.isShowSearch) {
-        this.isShowSearch = !this.isShowSearch
+    const isShowSearchModal = () => {
+      if (!state.isShowSearch) {
+        state.isShowSearch = !state.isShowSearch
       }
-    },
+    }
     // eslint-disable-next-line
-    onClickAwayShowSearch (event:any) {
-      if (this.isShowSearch) {
+    const onClickAwayShowSearch = (event:any) => {
+      if (state.isShowSearch) {
         if (event) {
-          this.isShowSearch = !this.isShowSearch
+          state.isShowSearch = !state.isShowSearch
         }
       }
-    },
+    }
     // eslint-disable-next-line
-    onClickAway (event:any) {
+    const onClickAway = (event:any) => {
       if (event) {
-        this.isShowCalendar = !this.isShowCalendar
+        state.isShowCalendar = !state.isShowCalendar
       }
-    },
+    }
     // eslint-disable-next-line
-    taskDetails (item: any) {
-      this.item = item
+    const taskDetails = (item: any) => {
+      state.taskDetailsItem = item
+    }
+    return {
+      searchTask,
+      isShowSearchModal,
+      onClickAwayShowSearch,
+      onClickAway,
+      taskDetails,
+      state
     }
   }
 })

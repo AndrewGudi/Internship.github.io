@@ -24,11 +24,11 @@
             textarea(v-model="changeDescription" v-if="showButtonEdit !== true" type="text" maxlength = "100") {{this.changeDescription}}
         button.task-details__button.edit(
           v-on:click="showButtonEdit = !showButtonEdit; changeTask()"
-          v-if="showButtonEdit"
+          v-if="showButtonEdit && !isShowEdit"
           ) Edit
         button.task-details__button.cancel(
           @click="clickShowTaskDetailsWindow"
-          v-if="showButtonEdit !== true"
+          v-if="showButtonEdit !== true ||  showButtonEdit && isShowEdit"
           ) Cancel
       .task-details__button-box
         button.task-details__button.save(
@@ -60,6 +60,10 @@ export default defineComponent({
       required: true
     },
     isShowTaskDetails: {
+      type: Boolean,
+      required: true
+    },
+    isShowEdit: {
       type: Boolean,
       required: true
     }
