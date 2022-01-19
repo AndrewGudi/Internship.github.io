@@ -18,12 +18,7 @@ export default function taskCalendarInterface (tasks: any, data: any) {
     })
     return tasksForCalendar
   })
-  // eslint-disable-next-line
-  const taskDetails = (item: any) => {
-    data.item = tasks[item]
-  }
   return {
-    attributes,
-    taskDetails
+    attributes
   }
 }

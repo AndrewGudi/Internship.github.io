@@ -51,7 +51,7 @@ export default defineComponent({
       this.$emit('deleteEvent', this.task.id)
     },
     clickTaskDetails () {
-      this.$emit('taskDetails', this.task)
+      this.$emit('taskDetails', this.task.id)
     },
     clickShowTaskDetailsWindow () {
       this.$emit('isShowTaskDetails', this.isShowTaskDetails)

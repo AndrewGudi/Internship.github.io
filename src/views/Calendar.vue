@@ -24,6 +24,7 @@ import { useStore } from 'vuex'
 import TaskDetailsModal from '../components/Layout/Content/Tasks/TaskDetailsModal'
 import taskLeftTime from '../composables/taskLeftTime'
 import taskCalendarInterface from '../composables/taskCalendarInterface'
+import openPopUpWindow from '../composables/openPopUpWindow'
 
 export default defineComponent({
   components: {
@@ -47,7 +48,8 @@ export default defineComponent({
       const { leftTime } = taskLeftTime(item)
       return leftTime.value
     })
-    const { attributes, taskDetails } = taskCalendarInterface(tasks, data)
+    const { attributes } = taskCalendarInterface(tasks, data)
+    const { taskDetails } = openPopUpWindow(data)
     return {
       data,
       attributes,

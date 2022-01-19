@@ -17,9 +17,9 @@ clean-page
     .tasks__row
       .tasks__open-tasks Open Tasks
       .tasks__buttons
-        button.tasks__input-button-add(v-if="tasks.length > 4") UP
+        button.tasks__input-button-add(v-if="userList.length > 4") UP
         button.tasks__input-button-add(:class="{'active': data.showWindow}" @click="data.showWindow = !data.showWindow") ADD
-    .tasks__completed(v-if="tasks.length===0") Sorry, but all tasks have already been completed.
+    .tasks__completed(v-if="userList.length===0") Sorry, but all tasks have already been completed.
     .tasks__new-tasks#container
       transition-group(
         name="list"
@@ -47,6 +47,8 @@ import 'animate.css'
 import TaskAddModal from '@/components/Layout/Content/Tasks/TaskAddModal.vue'
 import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
 import { mixin as VueClickAway } from 'vue3-click-away'
+import openPopUpWindow from '@/composables/openPopUpWindow'
+import addAnimation from '@/composables/addAnimation'
 
 export default defineComponent({
   mixins: [VueClickAway],
@@ -64,7 +66,6 @@ export default defineComponent({
       errorName: '',
       errorDescription: '',
       name: '',
-      id: Number,
       description: '',
       isShowTaskDetails: false,
       isShowEdit: false,
@@ -74,33 +75,15 @@ export default defineComponent({
     // eslint-disable-next-line
     const divs = ref<any[]>([])
     onMounted(() => {
-      divs.value.forEach((item, index: number) => {
-        setTimeout(() => {
-          item.$el.classList.add('animate-grow')
-          function handleAnimationEnd (event: Event) {
-            event.stopPropagation()
-            item.$el.classList.remove('animate-grow')
-          }
-          item.$el.addEventListener('animationend', handleAnimationEnd, { once: true })
-        }, 1000 * (index + 1))
-      })
+      const { addingTaskAnimation } = addAnimation(divs)
+      addingTaskAnimation()
     })
-    const onClickAway = (event:Event) => {
-      if (event) {
-        data.showWindow = !data.showWindow
-      }
-    }
-    // eslint-disable-next-line
-    const taskDetails = (item: any) => {
-      data.item = item
-    }
+    const { taskDetails } = openPopUpWindow(data)
     return {
       divs,
       data,
-      onClickAway,
       deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
       taskDetails,
-      tasks: computed(() => tasks),
       currentUser: computed(() => store.state.currentUser),
       userList
     }

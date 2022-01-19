@@ -84,7 +84,7 @@ export default defineComponent({
     ...mapActions(['changeObjectStatus', 'addClassColorTimeTask']),
 
     clickTaskDetails () {
-      this.$emit('taskDetails', this.item)
+      this.$emit('taskDetails', this.item.id)
     },
     clickIsShowTaskDetailsWindow () {
       this.$emit('isShowTaskDetails', this.isShowTaskDetails)
