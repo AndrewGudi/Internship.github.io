@@ -9,10 +9,10 @@
           button.item-menu__search
       .menu__nav
         .menu__column
-          current-user(:currentUser="currentUser")/
+          current-user
           .item-menu.item-menu__flex-start
             .item-menu__questions
-              .item-menu__number-questions(@click="clickShowWindow") {{CompletedTask}}
+              .item-menu__number-questions(@click="clickShowWindow()") {{CompletedTask}}
               .item-menu__sub-text Completed Tasks
             .item-menu__questions
               router-link(to="/" v-if="OpenTask > 0")
@@ -28,8 +28,10 @@
               .item-menu__notification {{notification.id}}
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import currentUser from '@/components/Layout/Menu/CurrentUser.vue'
+import { useStore } from 'vuex'
+import clickEmit from '@/composables/clickEmit'
 export default defineComponent({
   components: {
     currentUser
@@ -43,22 +45,17 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    currentUser: {
-      type: Object,
-      required: true
-    },
-    notification: {
-      type: Object,
-      required: true
-    },
-    showWindow: {
+    isShowWindow: {
       type: Boolean,
       required: true
     }
   },
-  methods: {
-    clickShowWindow () {
-      this.$emit('showWindow', this.showWindow)
+  setup (props, context) {
+    const store = useStore()
+    const { clickShowWindow } = clickEmit(props, context)
+    return {
+      clickShowWindow,
+      notification: computed(() => store.state.notification)
     }
   }
 })

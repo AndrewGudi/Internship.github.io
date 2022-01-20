@@ -4,13 +4,13 @@ task-details-modal(
   :isShowEdit="data.isShowEdit"
   v-if="data.isShowTaskDetails"
   :isShowTaskDetails="data.isShowTaskDetails"
-  @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
+  @isShowTaskDetails="isShowTaskDetailsWindow"
 )
-.tasks__add-modal(v-if="data.showWindow")
-  .tasks__bg(@click="data.showWindow = !data.showWindow")
+.tasks__add-modal(v-if="data.isShowWindow")
+  .tasks__bg(@click="isShowWindow")
   task-add-modal(
-    @showWindow="data.showWindow = !data.showWindow"
-    v-model:showWindow="data.showWindow"
+    :isShowWindow="data.isShowWindow"
+    @isShowWindow="isShowWindow"
   )
 clean-page
   .tasks__column
@@ -18,7 +18,7 @@ clean-page
       .tasks__open-tasks Open Tasks
       .tasks__buttons
         button.tasks__input-button-add(v-if="userList.length > 4") UP
-        button.tasks__input-button-add(:class="{'active': data.showWindow}" @click="data.showWindow = !data.showWindow") ADD
+        button.tasks__input-button-add(:class="{'active': data.isShowWindow}" @click="isShowWindow") ADD
     .tasks__completed(v-if="userList.length===0") Sorry, but all tasks have already been completed.
     .tasks__new-tasks#container
       transition-group(
@@ -28,18 +28,16 @@ clean-page
         v-for="(task, index) in userList"
         class="list-item"
         :task="task"
-        :index="index"
         :isShowTaskDetails="data.isShowTaskDetails"
-        @isShowTaskDetails="data.isShowTaskDetails = !data. isShowTaskDetails"
+        @isShowTaskDetails="isShowTaskDetailsWindow"
         :key="task.id"
         :ref="el => { if (el) divs[index] = el }"
-        :currentUser="currentUser"
         @taskDetails="taskDetails"
         @deleteEvent="deleteEvent"
         )
 </template>
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed, reactive } from 'vue'
+import { ref, onMounted, defineComponent, reactive } from 'vue'
 import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { useStore } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
@@ -70,7 +68,7 @@ export default defineComponent({
       isShowTaskDetails: false,
       isShowEdit: false,
       item: [],
-      showWindow: false
+      isShowWindow: false
     })
     // eslint-disable-next-line
     const divs = ref<any[]>([])
@@ -78,13 +76,14 @@ export default defineComponent({
       const { addingTaskAnimation } = addAnimation(divs)
       addingTaskAnimation()
     })
-    const { taskDetails } = openPopUpWindow(data)
+    const { taskDetails, isShowTaskDetailsWindow, isShowWindow } = openPopUpWindow(data)
     return {
       divs,
       data,
       deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
+      isShowTaskDetailsWindow,
       taskDetails,
-      currentUser: computed(() => store.state.currentUser),
+      isShowWindow,
       userList
     }
   }

@@ -4,7 +4,7 @@ task-details-modal(
   v-if="data.isShowTaskDetails"
   :isShowEdit="data.isShowEdit"
   :isShowTaskDetails="data.isShowTaskDetails"
-  @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
+  @isShowTaskDetails="isShowTaskDetailsWindow"
 )
 clean-page
   .text-center.section
@@ -14,7 +14,7 @@ clean-page
           span.calendar__day {{ day.day }}
           .calendar__task-box
             .calendar__task-name(v-for="item in attributes" :key="item.id" :class="'task-' + item.customData.class")
-              p(@click="taskDetails(item.key); data.isShowTaskDetails = !data.isShowTaskDetails") {{item.customData.title}}
+              p(@click="taskDetails(item.key); isShowTaskDetailsWindow()") {{item.customData.title}}
 </template>
 <script>
 import { defineComponent, reactive, ref } from 'vue'
@@ -49,11 +49,12 @@ export default defineComponent({
       return leftTime.value
     })
     const { attributes } = taskCalendarInterface(tasks, data)
-    const { taskDetails } = openPopUpWindow(data)
+    const { taskDetails, isShowTaskDetailsWindow } = openPopUpWindow(data)
     return {
       data,
       attributes,
-      taskDetails
+      taskDetails,
+      isShowTaskDetailsWindow
     }
   }
 })

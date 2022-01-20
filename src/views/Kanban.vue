@@ -4,7 +4,7 @@ task-details-modal(
   :isShowEdit="data.isShowEdit"
   v-if="data.isShowTaskDetails"
   :isShowTaskDetails="data.isShowTaskDetails"
-  @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
+  @isShowTaskDetails="isShowTaskDetailsWindow"
 )
 .task-completion__input-block(v-click-away="onClickAwayShowSearch")
   .task-completion__input
@@ -16,7 +16,7 @@ task-details-modal(
         v-for="item in searchTask(data.search, data.range)"
         :key="item.id"
         :isShowTaskDetails="data.isShowTaskDetails"
-        @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
+        @isShowTaskDetails="isShowTaskDetailsWindow"
         @taskDetails="taskDetails"
       )
     .calendar(v-if="data.isShowCalendar" v-click-away="onClickAway")
@@ -32,7 +32,7 @@ task-details-modal(
     task-column(v-for="taskStatus in data.status"
     :taskStatus="taskStatus"
     :isShowTaskDetails="data.isShowTaskDetails"
-    @isShowTaskDetails="data.isShowTaskDetails = !data.isShowTaskDetails"
+    @isShowTaskDetails="isShowTaskDetailsWindow"
     @taskDetails="taskDetails"
     )
 </template>
@@ -70,14 +70,15 @@ export default defineComponent({
       isShowEdit: false
     })
     const { searchTask, onClickAwayShowSearch, onClickAway } = searchTaskOnArray(data)
-    const { isShowSearchModal, taskDetails } = openPopUpWindow(data)
+    const { isShowSearchModal, taskDetails, isShowTaskDetailsWindow } = openPopUpWindow(data)
     return {
       data,
       searchTask,
       isShowSearchModal,
       onClickAwayShowSearch,
       onClickAway,
-      taskDetails
+      taskDetails,
+      isShowTaskDetailsWindow
     }
   }
 })

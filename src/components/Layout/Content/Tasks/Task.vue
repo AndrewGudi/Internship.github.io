@@ -9,36 +9,24 @@
     .item-task__text
       .item-task__text-name(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.name}}
       .item-task__text-description(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.description}}
-      button.deleteTaskBtn(@click="deleteEvent") Delete
+      button.deleteTaskBtn(@click="deleteEvent()") Delete
     .item-task__time
       .item-task__number {{ task.postDate.time }}
       .item-task__half-day {{task.postDate.halfDay}}
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 import { UserInterface } from '@/types/user.Interface'
 import { TaskInterface } from '@/types/task.interface'
 import 'animate.css'
+import { useStore } from 'vuex'
+import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'Task',
-  data () {
-    return {
-      showToAnswer: false,
-      deleteColor: false
-    }
-  },
   props: {
-    currentUser: {
-      type: Object as PropType<UserInterface>,
-      require: true
-    },
     task: {
       type: Object as PropType<TaskInterface>,
-      required: true
-    },
-    index: {
-      type: Number,
       required: true
     },
     isShowTaskDetails: {
@@ -46,15 +34,15 @@ export default defineComponent({
       required: true
     }
   },
-  methods: {
-    deleteEvent () {
-      this.$emit('deleteEvent', this.task.id)
-    },
-    clickTaskDetails () {
-      this.$emit('taskDetails', this.task.id)
-    },
-    clickShowTaskDetailsWindow () {
-      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
+  setup (props, context) {
+    const store = useStore()
+    const currentUser: UserInterface = store.state.currentUser
+    const { deleteEvent, clickTaskDetails, clickShowTaskDetailsWindow } = clickEmit(props, context)
+    return {
+      deleteEvent,
+      clickTaskDetails,
+      clickShowTaskDetailsWindow,
+      currentUser: computed(() => currentUser)
     }
   }
 })

@@ -7,7 +7,7 @@
         .item-header__text
           h1 Website Redesign
         .item-header__settings
-          button.item-header__button( :class="{'white': !showMenu, 'gray': showMenu}" @click="clickShowMenu")
+          button.item-header__button( :class="{'white': !isShowMenu, 'gray': isShowMenu}" @click="clickShowMenu()")
             .item-header__dots
               span
               span
@@ -38,24 +38,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import FriendAvatar from '@/components/Layout/Header/HeaderFriendsAvatars/FriendAvatar.vue'
-import { mapState } from 'vuex'
+import { useStore } from 'vuex'
 import HeaderBtn from '@/components/Layout/Header/HeaderBtn.vue'
+import clickEmit from '@/composables/clickEmit'
 export default defineComponent({
   components: { HeaderBtn, FriendAvatar },
   props: {
-    showMenu: {
+    isShowMenu: {
       type: Boolean,
       required: true
     }
   },
-  computed: {
-    ...mapState(['friends'])
-  },
-  methods: {
-    clickShowMenu () {
-      this.$emit('showMenu', this.showMenu)
+  setup (props, context) {
+    const store = useStore()
+    const { clickShowMenu } = clickEmit(props, context)
+    return {
+      friends: computed(() => store.state.friends),
+      clickShowMenu
     }
   }
 })

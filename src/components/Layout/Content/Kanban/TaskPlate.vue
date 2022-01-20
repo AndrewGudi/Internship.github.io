@@ -2,8 +2,8 @@
 .list-group-item
   .task-completion__box(
     :class="leftTime.colors"
-    @click="clickTaskDetails"
-    v-on:click="clickIsShowTaskDetailsWindow")
+    @click="clickTaskDetailsItemId();clickShowTaskDetailsWindow()"
+    )
     .task-completion__avatar
       img(:src="`/images/${item.avatar}`" alt="#")
     .task-completion__column
@@ -20,7 +20,7 @@
         span
         span
   .item-menu(v-if="data.isShowDropdown")
-    div(@click="clickTaskDetails(); clickIsShowTaskDetailsWindow(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
+    div(@click="clickTaskDetailsItemId(); clickShowTaskDetailsWindow(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
     div( v-if="item.status !== data.status.ToDo && item.status !== data.status.Done && item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
       p TO DO
     div( v-if="item.status !== data.status.InProgress && item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")
@@ -34,9 +34,10 @@
 import { computed, defineComponent, PropType, reactive, toRefs } from 'vue'
 import { TaskInterface } from '@/types/task.interface'
 import { StatusType } from '@/constants/enumStatusType'
-import { mapActions, useStore } from 'vuex'
+import { useStore } from 'vuex'
 import moment from 'moment'
 import taskLeftTime from '@/composables/taskLeftTime'
+import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'TaskPlate',
@@ -50,7 +51,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup (props) {
+  setup (props, context) {
     const store = useStore()
     const data = reactive({
       dateNow: moment(new Date()).toDate().getTime(),
@@ -59,6 +60,7 @@ export default defineComponent({
     })
     const { item } = toRefs(props)
     const { leftTime } = taskLeftTime(item)
+    const { clickTaskDetailsItemId, clickShowTaskDetailsWindow } = clickEmit(props, context)
     const iconStatus = computed(() => {
       if (props.item.status === 'todo') {
         return 'to-do'
@@ -75,19 +77,9 @@ export default defineComponent({
       leftTime,
       iconStatus,
       data,
+      clickTaskDetailsItemId,
+      clickShowTaskDetailsWindow,
       changeStatus: (status: StatusType) => store.dispatch('changeObjectStatus', { id: props.item.id, status: status })
-    }
-  },
-  computed: {
-  },
-  methods: {
-    ...mapActions(['changeObjectStatus', 'addClassColorTimeTask']),
-
-    clickTaskDetails () {
-      this.$emit('taskDetails', this.item.id)
-    },
-    clickIsShowTaskDetailsWindow () {
-      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
     }
   }
 })

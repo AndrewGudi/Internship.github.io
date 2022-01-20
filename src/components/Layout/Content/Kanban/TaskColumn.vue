@@ -15,8 +15,8 @@
       :key="item.id"
       draggable="true"
       :isShowTaskDetails="isShowTaskDetails"
-      @isShowTaskDetails="clickShowTaskDetails"
-      @taskDetails="clickTaskDetails"
+      @isShowTaskDetails="clickShowTaskDetailsItem"
+      @taskDetails="taskDetailsItem"
       @dragstart="startDrag($event, item)"
       )
 </template>
@@ -26,6 +26,7 @@ import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
 import { useStore } from 'vuex'
 import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
+import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'TaskColumn',
@@ -71,21 +72,14 @@ export default defineComponent({
         item.status = status
       }
     }
-    // eslint-disable-next-line
-    const clickTaskDetails = (item: any) => {
-      context.emit('taskDetails', item)
-    }
-    // eslint-disable-next-line
-    const clickShowTaskDetails = (isShowTaskDetails: any) => {
-      context.emit('isShowTaskDetails', isShowTaskDetails)
-    }
+    const { taskDetailsItem, clickShowTaskDetailsItem } = clickEmit(props, context)
     return {
       getStatus,
       currentTaskStatus,
       startDrag,
       onDrop,
-      clickTaskDetails,
-      clickShowTaskDetails,
+      taskDetailsItem,
+      clickShowTaskDetailsItem,
       tasks: computed(() => store.state.tasks),
       currentUser: computed(() => store.state.currentUser)
     }

@@ -12,8 +12,20 @@ export default function openPopUpWindow (data:any) {
   const taskDetails = (item: any) => {
     data.item = tasks[item]
   }
+  const isShowTaskDetailsWindow = () => {
+    data.isShowTaskDetails = !data.isShowTaskDetails
+  }
+  const isShowWindow = () => {
+    data.isShowWindow = !data.isShowWindow
+  }
+  const isShowMenu = () => {
+    data.isShowMenu = !data.isShowMenu
+  }
   return {
+    isShowTaskDetailsWindow,
     isShowSearchModal,
-    taskDetails
+    taskDetails,
+    isShowWindow,
+    isShowMenu
   }
 }

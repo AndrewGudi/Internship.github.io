@@ -17,43 +17,37 @@
             .task-details__completion To: {{item.executeBefore.date}}
         .task-details__text
           .task-details__task-name
-            p(v-if="showButtonEdit === true") {{item.name}}
-            textarea(v-model="changeName" v-if="showButtonEdit !== true" type="text" maxlength = "100") {{this.changeName}}
+            p(v-if="data.isShowButtonEdit") {{item.name}}
+            textarea(v-model="changeName" v-if="!data.isShowButtonEdit" type="text" maxlength = "100") {{changeName}}
           .task-details__task-description
-            p(v-if="showButtonEdit === true") {{item.description}}
-            textarea(v-model="changeDescription" v-if="showButtonEdit !== true" type="text" maxlength = "100") {{this.changeDescription}}
+            p(v-if="data.isShowButtonEdit") {{item.description}}
+            textarea(v-model="changeDescription" v-if="!data.isShowButtonEdit" type="text" maxlength = "100") {{changeDescription}}
         button.task-details__button.edit(
-          v-on:click="showButtonEdit = !showButtonEdit; changeTask()"
-          v-if="showButtonEdit && !isShowEdit"
+          @click="data.isShowButtonEdit = !data.isShowButtonEdit; changeTask()"
+          v-if="data.isShowButtonEdit && !isShowEdit"
           ) Edit
         button.task-details__button.cancel(
-          @click="clickShowTaskDetailsWindow"
-          v-if="showButtonEdit !== true ||  showButtonEdit && isShowEdit"
+          @click="clickShowTaskDetailsWindow()"
+          v-if="!data.isShowButtonEdit || data.isShowButtonEdit && isShowEdit"
           ) Cancel
       .task-details__button-box
         button.task-details__button.save(
-          v-if="showButtonSave"
-          @click="changeObject(this.changeName, this.changeDescription); clickShowTaskDetailsWindow()"
+          v-if="data.isShowButtonSave"
+          @click="changeObject(changeName, changeDescription); clickShowTaskDetailsWindow()"
           ) Save
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, reactive, ref, watch } from 'vue'
 import { TaskInterface } from '@/types/task.interface'
-import { mapActions } from 'vuex'
+import { useStore } from 'vuex'
 import { StatusType } from '@/constants/enumStatusType'
 import { mixin as VueClickAway } from 'vue3-click-away'
+import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'TaskDetailsModal',
   mixins: [VueClickAway],
-  data: () => ({
-    status: StatusType,
-    showButtonSave: false,
-    showButtonEdit: true,
-    changeName: '',
-    changeDescription: ''
-  }),
   props: {
     item: {
       type: Object as PropType<TaskInterface>,
@@ -68,25 +62,37 @@ export default defineComponent({
       required: true
     }
   },
-  watch: {
-    changeName () {
-      this.showButtonSave = this.changeName !== this.item.name
-    },
-    changeDescription () {
-      this.showButtonSave = this.changeDescription !== this.item.description
+  setup (props, context) {
+    const store = useStore()
+    const data = reactive({
+      status: StatusType,
+      isShowButtonSave: false,
+      isShowButtonEdit: true
+    })
+    // eslint-disable-next-line
+    const changeName: any = ref('')
+    // eslint-disable-next-line
+    const changeDescription: any = ref('')
+    const checkChangeName = () => {
+      data.isShowButtonSave = changeName.value !== props.item.name
     }
-  },
-  methods: {
-    ...mapActions(['changeObjectDetails']),
-    clickShowTaskDetailsWindow () {
-      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
-    },
-    changeTask () {
-      this.changeName = this.item.name
-      this.changeDescription = this.item.description
-    },
-    changeObject (name: TaskInterface, description: TaskInterface) {
-      this.changeObjectDetails({ id: this.item.id, name: name, description: description })
+    const checkChangeDescription = () => {
+      data.isShowButtonSave = changeDescription.value !== props.item.description
+    }
+    const changeTask = () => {
+      changeName.value = props.item.name
+      changeDescription.value = props.item.description
+    }
+    const { clickShowTaskDetailsWindow } = clickEmit(props, context)
+    watch(changeName, checkChangeName)
+    watch(changeDescription, checkChangeDescription)
+    return {
+      data,
+      clickShowTaskDetailsWindow,
+      changeObject: (name: TaskInterface, description: TaskInterface) => store.dispatch('changeObjectDetails', { id: props.item.id, name: name, description: description }),
+      changeName,
+      changeDescription,
+      changeTask
     }
   }
 })
