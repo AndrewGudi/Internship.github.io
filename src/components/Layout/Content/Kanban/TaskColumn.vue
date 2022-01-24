@@ -14,10 +14,8 @@
       v-for="item in getStatus(taskStatus)"
       :key="item.id"
       draggable="true"
-      :isShowTaskDetails="isShowTaskDetails"
-      @isShowTaskDetails="clickShowTaskDetailsItem"
-      @taskDetails="taskDetailsItem"
       @dragstart="startDrag($event, item)"
+      @detailsModalItem="detailsModalItem"
       )
 </template>
 <script lang="ts">
@@ -26,16 +24,11 @@ import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
 import { useStore } from 'vuex'
 import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
-import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'TaskColumn',
   components: { TaskPlate },
   props: {
-    isShowTaskDetails: {
-      type: Boolean,
-      required: true
-    },
     taskStatus: {
       type: String as PropType<StatusType>,
       required: true
@@ -72,16 +65,18 @@ export default defineComponent({
         item.status = status
       }
     }
-    const { taskDetailsItem, clickShowTaskDetailsItem } = clickEmit(props, context)
+    // eslint-disable-next-line
+    const detailsModalItem = (item: any) => {
+      context.emit('detailsModalItem', item)
+    }
     return {
       getStatus,
       currentTaskStatus,
       startDrag,
       onDrop,
-      taskDetailsItem,
-      clickShowTaskDetailsItem,
       tasks: computed(() => store.state.tasks),
-      currentUser: computed(() => store.state.currentUser)
+      currentUser: computed(() => store.state.currentUser),
+      detailsModalItem
     }
   }
 })

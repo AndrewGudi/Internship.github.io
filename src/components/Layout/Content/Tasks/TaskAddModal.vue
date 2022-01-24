@@ -1,6 +1,6 @@
 <template lang="pug">
-form.tasks__input(@submit="checkForm" v-if="isShowWindow" autocomplete="on")
-  .cl-btn-7(@click="clickShowWindow")
+form.tasks__input(@submit="checkForm" autocomplete="on")
+  .cl-btn-7(@click="isShowAddModal()")
   .tasks__avatar
     img.avatar(:src="`/images/${currentUser.avatarka}`", alt="Фото профиля")
   .tasks__user
@@ -23,7 +23,6 @@ import { useStore } from 'vuex'
 import { DatePicker } from 'v-calendar'
 import CalendarInput from '@/components/Layout/Content/CalendarInput.vue'
 import formAddTaskModal from '@/composables/formAddTaskModal'
-import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'TaskAddModal',
@@ -31,17 +30,10 @@ export default defineComponent({
     CalendarInput,
     DatePicker
   },
-  props: {
-    isShowWindow: {
-      type: Boolean,
-      required: true
-    }
-  },
   setup (props, context) {
     const store = useStore()
     const tasks = store.state.tasks
     const currentUser = store.state.currentUser
-
     const data = reactive({
       postDate: new Date(),
       executeBeforeDate: new Date(),
@@ -53,16 +45,16 @@ export default defineComponent({
       localTasks: [],
       statusType: StatusType
     })
-
-    const { clickShowWindow } = clickEmit(props, context)
     const { checkForm } = formAddTaskModal(data)
-
+    const isShowAddModal = () => {
+      context.emit('isShowAddModal')
+    }
     return {
       data,
       checkForm,
-      clickShowWindow,
       currentUser: computed(() => currentUser),
-      tasks: computed(() => tasks)
+      tasks: computed(() => tasks),
+      isShowAddModal
     }
   }
 })

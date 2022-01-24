@@ -5,7 +5,6 @@ img(:src='`/images/${image.src}`' class='activity__images-photo' alt='#' @click=
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ImageInterface } from '@/types/image.interface.ts'
-import clickEmit from '@/composables/clickEmit'
 export default defineComponent({
   props: {
     image: {
@@ -14,7 +13,9 @@ export default defineComponent({
     }
   },
   setup (props, context) {
-    const { imageId } = clickEmit(props, context)
+    const imageId = () => {
+      context.emit('imageId', props.image.id)
+    }
     return {
       imageId
     }

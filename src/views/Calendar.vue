@@ -1,10 +1,7 @@
 <template lang="pug">
 task-details-modal(
-  :item="data.item"
-  v-if="data.isShowTaskDetails"
-  :isShowEdit="data.isShowEdit"
-  :isShowTaskDetails="data.isShowTaskDetails"
-  @isShowTaskDetails="isShowTaskDetailsWindow"
+  v-if="isShowTaskDetails"
+  :task="data.item"
 )
 clean-page
   .text-center.section
@@ -14,7 +11,7 @@ clean-page
           span.calendar__day {{ day.day }}
           .calendar__task-box
             .calendar__task-name(v-for="item in attributes" :key="item.id" :class="'task-' + item.customData.class")
-              p(@click="taskDetails(item.key); isShowTaskDetailsWindow()") {{item.customData.title}}
+              p(@click="calendarDetailsModalItem(item.key)") {{item.customData.title}}
 </template>
 <script>
 import { defineComponent, reactive, ref } from 'vue'
@@ -24,7 +21,7 @@ import { useStore } from 'vuex'
 import TaskDetailsModal from '../components/Layout/Content/Tasks/TaskDetailsModal'
 import taskLeftTime from '../composables/taskLeftTime'
 import taskCalendarInterface from '../composables/taskCalendarInterface'
-import openPopUpWindow from '../composables/openPopUpWindow'
+import openTaskDetails from '../composables/openTaskDetails'
 
 export default defineComponent({
   components: {
@@ -39,7 +36,6 @@ export default defineComponent({
       masks: {
         weekdays: 'WWW'
       },
-      isShowTaskDetails: false,
       isShowEdit: true,
       item: []
     })
@@ -49,12 +45,12 @@ export default defineComponent({
       return leftTime.value
     })
     const { attributes } = taskCalendarInterface(tasks, data)
-    const { taskDetails, isShowTaskDetailsWindow } = openPopUpWindow(data)
+    const { calendarDetailsModalItem, isShowTaskDetails } = openTaskDetails(data)
     return {
       data,
       attributes,
-      taskDetails,
-      isShowTaskDetailsWindow
+      calendarDetailsModalItem,
+      isShowTaskDetails
     }
   }
 })

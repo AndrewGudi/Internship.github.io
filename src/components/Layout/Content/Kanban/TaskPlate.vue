@@ -2,7 +2,7 @@
 .list-group-item
   .task-completion__box(
     :class="leftTime.colors"
-    @click="clickTaskDetailsItemId();clickShowTaskDetailsWindow()"
+    @click="detailsModalItem"
     )
     .task-completion__avatar
       img(:src="`/images/${item.avatar}`" alt="#")
@@ -20,14 +20,14 @@
         span
         span
   .item-menu(v-if="data.isShowDropdown")
-    div(@click="clickTaskDetailsItemId(); clickShowTaskDetailsWindow(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
+    div(@click="detailsModalItem; data.isShowDropdown = !data.isShowDropdown" ) EDIT
     div( v-if="item.status !== data.status.ToDo && item.status !== data.status.Done && item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
       p TO DO
     div( v-if="item.status !== data.status.InProgress && item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")
       p IN PROGRESS
     div( v-if="item.status !== data.status.Done" @click="changeStatus(data.status.Done).then()")
       p DONE
-    div(@click=" data.isShowDropdown = !data.isShowDropdown" ) DELETE
+    div(@click="deleteTask" ) DELETE
 </template>
 
 <script lang="ts">
@@ -37,17 +37,12 @@ import { StatusType } from '@/constants/enumStatusType'
 import { useStore } from 'vuex'
 import moment from 'moment'
 import taskLeftTime from '@/composables/taskLeftTime'
-import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'TaskPlate',
   props: {
     item: {
       type: Object as PropType<TaskInterface>,
-      required: true
-    },
-    isShowTaskDetails: {
-      type: Boolean,
       required: true
     }
   },
@@ -60,7 +55,9 @@ export default defineComponent({
     })
     const { item } = toRefs(props)
     const { leftTime } = taskLeftTime(item)
-    const { clickTaskDetailsItemId, clickShowTaskDetailsWindow } = clickEmit(props, context)
+    const detailsModalItem = () => {
+      context.emit('detailsModalItem', item.value)
+    }
     const iconStatus = computed(() => {
       if (props.item.status === 'todo') {
         return 'to-do'
@@ -73,12 +70,13 @@ export default defineComponent({
       }
       return 0
     })
+    const deleteTask = () => store.dispatch('removeItem', { id: props.item.id })
     return {
       leftTime,
       iconStatus,
       data,
-      clickTaskDetailsItemId,
-      clickShowTaskDetailsWindow,
+      detailsModalItem,
+      deleteTask,
       changeStatus: (status: StatusType) => store.dispatch('changeObjectStatus', { id: props.item.id, status: status })
     }
   }

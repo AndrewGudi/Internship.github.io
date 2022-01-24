@@ -1,39 +1,32 @@
 <template lang="pug">
 task-details-modal(
-  :item="data.item"
-  :isShowEdit="data.isShowEdit"
-  v-if="data.isShowTaskDetails"
-  :isShowTaskDetails="data.isShowTaskDetails"
-  @isShowTaskDetails="isShowTaskDetailsWindow"
+  v-if="isShowTaskDetails"
+  :task="data.item"
 )
-.tasks__add-modal(v-if="data.isShowWindow")
-  .tasks__bg(@click="isShowWindow")
+.tasks__add-modal(v-if="isShowAddTask")
+  .tasks__bg(@click="isShowAddModal")
   task-add-modal(
-    :isShowWindow="data.isShowWindow"
-    @isShowWindow="isShowWindow"
+  @isShowAddModal="isShowAddModal"
   )
 clean-page
   .tasks__column
     .tasks__row
       .tasks__open-tasks Open Tasks
       .tasks__buttons
-        button.tasks__input-button-add(v-if="userList.length > 4") UP
-        button.tasks__input-button-add(:class="{'active': data.isShowWindow}" @click="isShowWindow") ADD
-    .tasks__completed(v-if="userList.length===0") Sorry, but all tasks have already been completed.
+        button.tasks__input-button-add(v-if="taskList.length > 4") UP
+        button.tasks__input-button-add(:class="{'active': data.isShowWindow}" @click="isShowAddModal") ADD
+    .tasks__completed(v-if="taskList.length===0") Sorry, but all tasks have already been completed.
     .tasks__new-tasks#container
       transition-group(
         name="list"
         )
         task(
-        v-for="(task, index) in userList"
+        v-for="(task, index) in taskList"
         class="list-item"
         :task="task"
-        :isShowTaskDetails="data.isShowTaskDetails"
-        @isShowTaskDetails="isShowTaskDetailsWindow"
         :key="task.id"
         :ref="el => { if (el) divs[index] = el }"
-        @taskDetails="taskDetails"
-        @deleteEvent="deleteEvent"
+        @detailsModalItem="detailsModalItem"
         )
 </template>
 <script lang="ts">
@@ -45,8 +38,9 @@ import 'animate.css'
 import TaskAddModal from '@/components/Layout/Content/Tasks/TaskAddModal.vue'
 import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
 import { mixin as VueClickAway } from 'vue3-click-away'
-import openPopUpWindow from '@/composables/openPopUpWindow'
 import addAnimation from '@/composables/addAnimation'
+import openTaskDetails from '@/composables/openTaskDetails'
+import openAddTask from '@/composables/openAddTask'
 
 export default defineComponent({
   mixins: [VueClickAway],
@@ -59,7 +53,7 @@ export default defineComponent({
   setup () {
     const store = useStore()
     const tasks = store.state.moduleTasks.tasks
-    const userList = ref(tasks)
+    const taskList = ref(tasks)
     const data = reactive({
       errorName: '',
       errorDescription: '',
@@ -67,7 +61,7 @@ export default defineComponent({
       description: '',
       isShowTaskDetails: false,
       isShowEdit: false,
-      item: [],
+      item: {},
       isShowWindow: false
     })
     // eslint-disable-next-line
@@ -76,15 +70,17 @@ export default defineComponent({
       const { addingTaskAnimation } = addAnimation(divs)
       addingTaskAnimation()
     })
-    const { taskDetails, isShowTaskDetailsWindow, isShowWindow } = openPopUpWindow(data)
+    const { isShowAddTask, isShowAddModal } = openAddTask()
+    const { detailsModalItem, isShowTaskDetails } = openTaskDetails(data)
     return {
       divs,
       data,
       deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
-      isShowTaskDetailsWindow,
-      taskDetails,
-      isShowWindow,
-      userList
+      taskList,
+      detailsModalItem,
+      isShowTaskDetails,
+      isShowAddTask,
+      isShowAddModal
     }
   }
 })

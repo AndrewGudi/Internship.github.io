@@ -1,10 +1,7 @@
 <template lang="pug">
 task-details-modal(
-  :item="data.item"
-  :isShowEdit="data.isShowEdit"
-  v-if="data.isShowTaskDetails"
-  :isShowTaskDetails="data.isShowTaskDetails"
-  @isShowTaskDetails="isShowTaskDetailsWindow"
+  v-if="isShowTaskDetails"
+  :task="data.item"
 )
 .task-completion__input-block(v-click-away="onClickAwayShowSearch")
   .task-completion__input
@@ -15,9 +12,7 @@ task-details-modal(
         :item="item"
         v-for="item in searchTask(data.search, data.range)"
         :key="item.id"
-        :isShowTaskDetails="data.isShowTaskDetails"
-        @isShowTaskDetails="isShowTaskDetailsWindow"
-        @taskDetails="taskDetails"
+        @detailsModalItem="detailsModalItem"
       )
     .calendar(v-if="data.isShowCalendar" v-click-away="onClickAway")
       v-date-picker(
@@ -31,9 +26,7 @@ task-details-modal(
   .task-completion__body
     task-column(v-for="taskStatus in data.status"
     :taskStatus="taskStatus"
-    :isShowTaskDetails="data.isShowTaskDetails"
-    @isShowTaskDetails="isShowTaskDetailsWindow"
-    @taskDetails="taskDetails"
+    @detailsModalItem="detailsModalItem"
     )
 </template>
 
@@ -45,8 +38,8 @@ import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal
 import { mixin as VueClickAway } from 'vue3-click-away'
 import TaskColumn from '@/components/Layout/Content/Kanban/TaskColumn.vue'
 import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
-import openPopUpWindow from '@/composables/openPopUpWindow'
 import searchTaskOnArray from '@/composables/searchTaskOnArray'
+import openTaskDetails from '@/composables/openTaskDetails'
 
 export default defineComponent({
   mixins: [VueClickAway],
@@ -69,16 +62,16 @@ export default defineComponent({
       isShowSearch: true,
       isShowEdit: false
     })
-    const { searchTask, onClickAwayShowSearch, onClickAway } = searchTaskOnArray(data)
-    const { isShowSearchModal, taskDetails, isShowTaskDetailsWindow } = openPopUpWindow(data)
+    const { searchTask, onClickAwayShowSearch, onClickAway, isShowSearchModal } = searchTaskOnArray(data)
+    const { detailsModalItem, isShowTaskDetails } = openTaskDetails(data)
     return {
       data,
       searchTask,
-      isShowSearchModal,
       onClickAwayShowSearch,
       onClickAway,
-      taskDetails,
-      isShowTaskDetailsWindow
+      detailsModalItem,
+      isShowSearchModal,
+      isShowTaskDetails
     }
   }
 })

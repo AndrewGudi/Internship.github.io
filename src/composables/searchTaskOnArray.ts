@@ -4,7 +4,12 @@ import { useStore } from 'vuex'
 // eslint-disable-next-line
 export default function searchTaskOnArray (data: any) {
   const store = useStore()
-  const tasks = store.state.tasks
+  const tasks = store.state.moduleTasks.tasks
+  const isShowSearchModal = () => {
+    if (!data.isShowSearch) {
+      data.isShowSearch = !data.isShowSearch
+    }
+  }
   // eslint-disable-next-line
   const searchTask = (search: string, range: any) => {
     const startDate = Date.parse(range.start)
@@ -60,6 +65,7 @@ export default function searchTaskOnArray (data: any) {
   return {
     searchTask,
     onClickAwayShowSearch,
-    onClickAway
+    onClickAway,
+    isShowSearchModal
   }
 }

@@ -1,98 +1,76 @@
 <template lang="pug">
 .task-details
-  .task-details__bg(@click="clickShowTaskDetailsWindow")
+  .task-details__bg(@click="isShowTaskDetails = !isShowTaskDetails")
   .task-details__modal
     .task-details__body
       .task-details__culomn
         .task-details__user
           .task-details__avatar
-            img(:src="`/images/${item.avatar}`" alt="#")
+            img(:src="`/images/${task.avatar}`" alt="#")
           .task-details__user-name
             .task-details__first-name
-              p {{item.firstname}}
+              p {{task.firstname}}
             .task-details__last-name
-              p {{item.lastname}}
+              p {{task.lastname}}
           .task-details__task-date
-            .task-details__post From: {{item.postDate.date}}
-            .task-details__completion To: {{item.executeBefore.date}}
+            .task-details__post From: {{task.postDate.date}}
+            .task-details__completion To: {{task.executeBefore.date}}
         .task-details__text
           .task-details__task-name
-            p(v-if="data.isShowButtonEdit") {{item.name}}
+            p(v-if="data.isShowButtonEdit") {{task.name}}
             textarea(v-model="changeName" v-if="!data.isShowButtonEdit" type="text" maxlength = "100") {{changeName}}
           .task-details__task-description
-            p(v-if="data.isShowButtonEdit") {{item.description}}
+            p(v-if="data.isShowButtonEdit") {{task.description}}
             textarea(v-model="changeDescription" v-if="!data.isShowButtonEdit" type="text" maxlength = "100") {{changeDescription}}
         button.task-details__button.edit(
           @click="data.isShowButtonEdit = !data.isShowButtonEdit; changeTask()"
           v-if="data.isShowButtonEdit && !isShowEdit"
           ) Edit
         button.task-details__button.cancel(
-          @click="clickShowTaskDetailsWindow()"
+          @click="isShowTaskDetails = !isShowTaskDetails"
           v-if="!data.isShowButtonEdit || data.isShowButtonEdit && isShowEdit"
           ) Cancel
       .task-details__button-box
         button.task-details__button.save(
           v-if="data.isShowButtonSave"
-          @click="changeObject(changeName, changeDescription); clickShowTaskDetailsWindow()"
+          @click="changeObject(changeName, changeDescription).then(); isShowTaskDetails = !isShowTaskDetails"
           ) Save
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, ref, watch } from 'vue'
-import { TaskInterface } from '@/types/task.interface'
-import { useStore } from 'vuex'
+import { defineComponent, inject, PropType, reactive, toRefs } from 'vue'
 import { StatusType } from '@/constants/enumStatusType'
 import { mixin as VueClickAway } from 'vue3-click-away'
-import clickEmit from '@/composables/clickEmit'
+import checkChange from '@/composables/checkChange'
+import { TaskInterface } from '@/types/task.interface'
 
 export default defineComponent({
   name: 'TaskDetailsModal',
   mixins: [VueClickAway],
   props: {
-    item: {
+    task: {
       type: Object as PropType<TaskInterface>,
-      required: true
-    },
-    isShowTaskDetails: {
-      type: Boolean,
-      required: true
-    },
-    isShowEdit: {
-      type: Boolean,
       required: true
     }
   },
-  setup (props, context) {
-    const store = useStore()
+  setup (props) {
     const data = reactive({
       status: StatusType,
       isShowButtonSave: false,
       isShowButtonEdit: true
     })
-    // eslint-disable-next-line
-    const changeName: any = ref('')
-    // eslint-disable-next-line
-    const changeDescription: any = ref('')
-    const checkChangeName = () => {
-      data.isShowButtonSave = changeName.value !== props.item.name
-    }
-    const checkChangeDescription = () => {
-      data.isShowButtonSave = changeDescription.value !== props.item.description
-    }
-    const changeTask = () => {
-      changeName.value = props.item.name
-      changeDescription.value = props.item.description
-    }
-    const { clickShowTaskDetailsWindow } = clickEmit(props, context)
-    watch(changeName, checkChangeName)
-    watch(changeDescription, checkChangeDescription)
+    const isShowEdit = inject('isShowEdit')
+    const isShowTaskDetails = inject('isShowTaskDetails')
+    const { task } = toRefs(props)
+    const { changeName, changeDescription, changeTask, changeObject } = checkChange(data, task)
     return {
       data,
-      clickShowTaskDetailsWindow,
-      changeObject: (name: TaskInterface, description: TaskInterface) => store.dispatch('changeObjectDetails', { id: props.item.id, name: name, description: description }),
       changeName,
       changeDescription,
-      changeTask
+      changeTask,
+      isShowEdit,
+      isShowTaskDetails,
+      changeObject
     }
   }
 })

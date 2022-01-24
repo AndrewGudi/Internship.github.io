@@ -7,9 +7,9 @@
       p {{ task.firstname }}
       p {{ task.lastname }}
     .item-task__text
-      .item-task__text-name(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.name}}
-      .item-task__text-description(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.description}}
-      button.deleteTaskBtn(@click="deleteEvent()") Delete
+      .item-task__text-name(@click="detailsModalItem()") {{task.name}}
+      .item-task__text-description(@click="detailsModalItem()") {{task.description}}
+      button.deleteTaskBtn(@click="deleteTask") Delete
     .item-task__time
       .item-task__number {{ task.postDate.time }}
       .item-task__half-day {{task.postDate.halfDay}}
@@ -20,7 +20,6 @@ import { UserInterface } from '@/types/user.Interface'
 import { TaskInterface } from '@/types/task.interface'
 import 'animate.css'
 import { useStore } from 'vuex'
-import clickEmit from '@/composables/clickEmit'
 
 export default defineComponent({
   name: 'Task',
@@ -28,21 +27,19 @@ export default defineComponent({
     task: {
       type: Object as PropType<TaskInterface>,
       required: true
-    },
-    isShowTaskDetails: {
-      type: Boolean,
-      required: true
     }
   },
   setup (props, context) {
     const store = useStore()
     const currentUser: UserInterface = store.state.currentUser
-    const { deleteEvent, clickTaskDetails, clickShowTaskDetailsWindow } = clickEmit(props, context)
+    const deleteTask = () => store.dispatch('removeItem', { id: props.task.id })
+    const detailsModalItem = () => {
+      context.emit('detailsModalItem', props.task)
+    }
     return {
-      deleteEvent,
-      clickTaskDetails,
-      clickShowTaskDetailsWindow,
-      currentUser: computed(() => currentUser)
+      deleteTask,
+      currentUser: computed(() => currentUser),
+      detailsModalItem
     }
   }
 })

@@ -42,7 +42,6 @@ import { computed, defineComponent } from 'vue'
 import FriendAvatar from '@/components/Layout/Header/HeaderFriendsAvatars/FriendAvatar.vue'
 import { useStore } from 'vuex'
 import HeaderBtn from '@/components/Layout/Header/HeaderBtn.vue'
-import clickEmit from '@/composables/clickEmit'
 export default defineComponent({
   components: { HeaderBtn, FriendAvatar },
   props: {
@@ -53,7 +52,9 @@ export default defineComponent({
   },
   setup (props, context) {
     const store = useStore()
-    const { clickShowMenu } = clickEmit(props, context)
+    const clickShowMenu = () => {
+      context.emit('isShowMenu', props.isShowMenu)
+    }
     return {
       friends: computed(() => store.state.friends),
       clickShowMenu

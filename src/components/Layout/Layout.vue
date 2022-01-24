@@ -28,7 +28,6 @@ import { useStore } from 'vuex'
 import Sidebar from '@/components/Layout/Menu/Sidebar.vue'
 import HeaderContent from '@/components/Layout/Content/HeaderContent.vue'
 import HeaderTop from '@/components/Layout/Header/HeaderTop.vue'
-import openPopUpWindow from '@/composables/openPopUpWindow'
 export default defineComponent({
   components: {
     HeaderTop,
@@ -42,11 +41,16 @@ export default defineComponent({
       isShowWindow: false,
       CompletedTask: 372
     })
-    const { isShowWindow, isShowMenu } = openPopUpWindow(data)
+    const isShowMenu = () => {
+      data.isShowMenu = !data.isShowMenu
+    }
+    const isShowWindow = (item: boolean) => {
+      data.isShowWindow = !item
+    }
     return {
       data,
-      isShowWindow,
       isShowMenu,
+      isShowWindow,
       tasks: computed(() => store.state.moduleTasks.tasks),
       deleteEvent: (id: number) => store.dispatch('removeItem', { id: id })
     }

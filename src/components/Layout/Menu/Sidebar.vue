@@ -31,7 +31,6 @@
 import { computed, defineComponent } from 'vue'
 import currentUser from '@/components/Layout/Menu/CurrentUser.vue'
 import { useStore } from 'vuex'
-import clickEmit from '@/composables/clickEmit'
 export default defineComponent({
   components: {
     currentUser
@@ -52,7 +51,9 @@ export default defineComponent({
   },
   setup (props, context) {
     const store = useStore()
-    const { clickShowWindow } = clickEmit(props, context)
+    const clickShowWindow = () => {
+      context.emit('isShowWindow', props.isShowWindow)
+    }
     return {
       clickShowWindow,
       notification: computed(() => store.state.notification)

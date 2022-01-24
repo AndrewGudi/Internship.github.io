@@ -3,7 +3,7 @@ clean-page
   .activity__body
     .activity__column
       .activity__day Today
-      activity-post(v-for="post of posts" :post="post" :key="posts.id")/
+      activity-post(v-for="post of posts" :post="post" :key="post.id")/
       .activity__row
         .item-post__icon
         .activity__images
