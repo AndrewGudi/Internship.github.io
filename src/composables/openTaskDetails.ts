@@ -1,13 +1,15 @@
-import { provide, ref } from 'vue'
+import { provide } from 'vue'
 import { useStore } from 'vuex'
 
 // eslint-disable-next-line
-export default function openTaskDetails (data: any) {
+export default function openTaskDetails (data: any, context: any) {
   const store = useStore()
   const tasks = store.state.moduleTasks.tasks
-  const isShowTaskDetails = ref(false)
   const isShowTaskModal = () => {
-    isShowTaskDetails.value = !isShowTaskDetails.value
+    data.isShowTaskDetails = !data.isShowTaskDetails
+  }
+  const openTaskDetailsEmit = (isShowTaskDetails: boolean) => {
+    context.emit('isShowTaskModal', isShowTaskDetails)
   }
   // eslint-disable-next-line
   const detailsModalItem = (task: any) => {
@@ -19,11 +21,12 @@ export default function openTaskDetails (data: any) {
     isShowTaskModal()
   }
   provide('isShowEdit', data.isShowEdit)
-  provide('isShowTaskDetails', isShowTaskDetails)
+  provide('isShowTaskDetails', data.isShowTaskDetails)
   provide('task', data.item)
   return {
     detailsModalItem,
     calendarDetailsModalItem,
-    isShowTaskDetails
+    openTaskDetailsEmit,
+    isShowTaskModal
   }
 }

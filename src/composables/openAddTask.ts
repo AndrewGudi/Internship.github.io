@@ -1,13 +1,10 @@
-import { ref } from 'vue'
 
 // eslint-disable-next-line
-export default function openAddTask () {
-  const isShowAddTask = ref(false)
+export default function openAddTask (data: any) {
   const isShowAddModal = () => {
-    isShowAddTask.value = !isShowAddTask.value
+    data.isShowAddTask = !data.isShowAddTask
   }
   return {
-    isShowAddTask,
     isShowAddModal
   }
 }

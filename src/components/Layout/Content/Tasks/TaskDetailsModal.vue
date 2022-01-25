@@ -1,6 +1,6 @@
 <template lang="pug">
 .task-details
-  .task-details__bg(@click="isShowTaskDetails = !isShowTaskDetails")
+  .task-details__bg(@click="openTaskDetailsEmit(isShowTaskDetails)")
   .task-details__modal
     .task-details__body
       .task-details__culomn
@@ -27,13 +27,13 @@
           v-if="data.isShowButtonEdit && !isShowEdit"
           ) Edit
         button.task-details__button.cancel(
-          @click="isShowTaskDetails = !isShowTaskDetails"
+          @click="openTaskDetailsEmit(isShowTaskDetails)"
           v-if="!data.isShowButtonEdit || data.isShowButtonEdit && isShowEdit"
           ) Cancel
       .task-details__button-box
         button.task-details__button.save(
           v-if="data.isShowButtonSave"
-          @click="changeObject(changeName, changeDescription).then(); isShowTaskDetails = !isShowTaskDetails"
+          @click="changeObject(changeName, changeDescription).then(); openTaskDetailsEmit(isShowTaskDetails)"
           ) Save
 </template>
 
@@ -43,6 +43,7 @@ import { StatusType } from '@/constants/enumStatusType'
 import { mixin as VueClickAway } from 'vue3-click-away'
 import checkChange from '@/composables/checkChange'
 import { TaskInterface } from '@/types/task.interface'
+import openTaskDetails from '@/composables/openTaskDetails'
 
 export default defineComponent({
   name: 'TaskDetailsModal',
@@ -53,7 +54,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup (props) {
+  setup (props, context) {
     const data = reactive({
       status: StatusType,
       isShowButtonSave: false,
@@ -61,8 +62,10 @@ export default defineComponent({
     })
     const isShowEdit = inject('isShowEdit')
     const isShowTaskDetails = inject('isShowTaskDetails')
+    console.log(isShowTaskDetails)
     const { task } = toRefs(props)
     const { changeName, changeDescription, changeTask, changeObject } = checkChange(data, task)
+    const { openTaskDetailsEmit } = openTaskDetails(data, context)
     return {
       data,
       changeName,
@@ -70,6 +73,7 @@ export default defineComponent({
       changeTask,
       isShowEdit,
       isShowTaskDetails,
+      openTaskDetailsEmit,
       changeObject
     }
   }

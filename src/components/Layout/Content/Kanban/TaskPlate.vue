@@ -20,7 +20,7 @@
         span
         span
   .item-menu(v-if="data.isShowDropdown")
-    div(@click="detailsModalItem; data.isShowDropdown = !data.isShowDropdown" ) EDIT
+    div(@click="detailsModalItem(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
     div( v-if="item.status !== data.status.ToDo && item.status !== data.status.Done && item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
       p TO DO
     div( v-if="item.status !== data.status.InProgress && item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")

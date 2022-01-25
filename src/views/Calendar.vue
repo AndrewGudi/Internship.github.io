@@ -1,7 +1,8 @@
 <template lang="pug">
 task-details-modal(
-  v-if="isShowTaskDetails"
+  v-if="data.isShowTaskDetails"
   :task="data.item"
+  @isShowTaskModal="isShowTaskModal"
 )
 clean-page
   .text-center.section
@@ -29,7 +30,7 @@ export default defineComponent({
     CleanPage,
     ComingSoon
   },
-  setup () {
+  setup (props, context) {
     const store = useStore()
     const tasks = store.state.moduleTasks.tasks
     const data = reactive({
@@ -37,7 +38,8 @@ export default defineComponent({
         weekdays: 'WWW'
       },
       isShowEdit: true,
-      item: []
+      item: [],
+      isShowTaskDetails: false
     })
     tasks.forEach((task) => {
       const item = ref(task)
@@ -45,12 +47,12 @@ export default defineComponent({
       return leftTime.value
     })
     const { attributes } = taskCalendarInterface(tasks, data)
-    const { calendarDetailsModalItem, isShowTaskDetails } = openTaskDetails(data)
+    const { calendarDetailsModalItem, isShowTaskModal } = openTaskDetails(data, context)
     return {
       data,
       attributes,
       calendarDetailsModalItem,
-      isShowTaskDetails
+      isShowTaskModal
     }
   }
 })

@@ -1,9 +1,10 @@
 <template lang="pug">
 task-details-modal(
-  v-if="isShowTaskDetails"
+  v-if="data.isShowTaskDetails"
   :task="data.item"
+  @isShowTaskModal="isShowTaskModal"
 )
-.tasks__add-modal(v-if="isShowAddTask")
+.tasks__add-modal(v-if="data.isShowAddTask")
   .tasks__bg(@click="isShowAddModal")
   task-add-modal(
   @isShowAddModal="isShowAddModal"
@@ -50,7 +51,7 @@ export default defineComponent({
     CleanPage,
     Task
   },
-  setup () {
+  setup (props, context) {
     const store = useStore()
     const tasks = store.state.moduleTasks.tasks
     const taskList = ref(tasks)
@@ -60,6 +61,7 @@ export default defineComponent({
       name: '',
       description: '',
       isShowTaskDetails: false,
+      isShowAddTask: false,
       isShowEdit: false,
       item: {},
       isShowWindow: false
@@ -70,17 +72,16 @@ export default defineComponent({
       const { addingTaskAnimation } = addAnimation(divs)
       addingTaskAnimation()
     })
-    const { isShowAddTask, isShowAddModal } = openAddTask()
-    const { detailsModalItem, isShowTaskDetails } = openTaskDetails(data)
+    const { isShowAddModal } = openAddTask(data)
+    const { detailsModalItem, isShowTaskModal } = openTaskDetails(data, context)
     return {
       divs,
       data,
       deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
       taskList,
       detailsModalItem,
-      isShowTaskDetails,
-      isShowAddTask,
-      isShowAddModal
+      isShowAddModal,
+      isShowTaskModal
     }
   }
 })

@@ -1,7 +1,8 @@
 <template lang="pug">
 task-details-modal(
-  v-if="isShowTaskDetails"
+  v-if="data.isShowTaskDetails"
   :task="data.item"
+  @isShowTaskModal="isShowTaskModal"
 )
 .task-completion__input-block(v-click-away="onClickAwayShowSearch")
   .task-completion__input
@@ -49,7 +50,7 @@ export default defineComponent({
     TaskDetailsModal,
     CleanPage
   },
-  setup () {
+  setup (props, context) {
     const data = reactive({
       range: '',
       taskFilter: [],
@@ -58,12 +59,13 @@ export default defineComponent({
       status: StatusType,
       item: [],
       isShowTaskDetails: false,
+      isShowAddTask: true,
       isShowCalendar: false,
       isShowSearch: true,
       isShowEdit: false
     })
     const { searchTask, onClickAwayShowSearch, onClickAway, isShowSearchModal } = searchTaskOnArray(data)
-    const { detailsModalItem, isShowTaskDetails } = openTaskDetails(data)
+    const { detailsModalItem, isShowTaskModal } = openTaskDetails(data, context)
     return {
       data,
       searchTask,
@@ -71,7 +73,7 @@ export default defineComponent({
       onClickAway,
       detailsModalItem,
       isShowSearchModal,
-      isShowTaskDetails
+      isShowTaskModal
     }
   }
 })
