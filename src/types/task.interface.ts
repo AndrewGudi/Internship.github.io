@@ -1,9 +1,10 @@
 import { ImageInterface } from '@/types/image.interface'
 import { StatusType } from '@/constants/enumStatusType'
-export interface Data{
+export interface Date{
   date: string
   halfDay: string
   time: string
+  title: string
 }
 export interface TaskInterface{
   id: string
@@ -16,7 +17,8 @@ export interface TaskInterface{
   src?: ImageInterface
   time: number
   halfDay: string
-  executeBefore: Data
-  postDate: Data
+  executeBefore: Date
+  postDate: Date
   colors: string
+  customData: Date
 }

@@ -7,54 +7,39 @@
       p {{ task.firstname }}
       p {{ task.lastname }}
     .item-task__text
-      .item-task__text-name(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.name}}
-      .item-task__text-description(@click="clickTaskDetails();clickShowTaskDetailsWindow()") {{task.description}}
-      button.deleteTaskBtn(@click="deleteEvent") Delete
+      .item-task__text-name(@click="detailsModalItem()") {{task.name}}
+      .item-task__text-description(@click="detailsModalItem()") {{task.description}}
+      button.deleteTaskBtn(@click="deleteTask") Delete
     .item-task__time
       .item-task__number {{ task.postDate.time }}
       .item-task__half-day {{task.postDate.halfDay}}
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent, PropType } from 'vue'
 import { UserInterface } from '@/types/user.Interface'
 import { TaskInterface } from '@/types/task.interface'
 import 'animate.css'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'Task',
-  data () {
-    return {
-      showToAnswer: false,
-      deleteColor: false
-    }
-  },
   props: {
-    currentUser: {
-      type: Object as PropType<UserInterface>,
-      require: true
-    },
     task: {
       type: Object as PropType<TaskInterface>,
       required: true
-    },
-    index: {
-      type: Number,
-      required: true
-    },
-    isShowTaskDetails: {
-      type: Boolean,
-      required: true
     }
   },
-  methods: {
-    deleteEvent () {
-      this.$emit('deleteEvent', this.task.id)
-    },
-    clickTaskDetails () {
-      this.$emit('taskDetails', this.task)
-    },
-    clickShowTaskDetailsWindow () {
-      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
+  setup (props, context) {
+    const store = useStore()
+    const currentUser: UserInterface = store.state.currentUser
+    const deleteTask = () => store.dispatch('removeItem', { id: props.task.id })
+    const detailsModalItem = () => {
+      context.emit('detailsModalItem', props.task)
+    }
+    return {
+      deleteTask,
+      currentUser: computed(() => currentUser),
+      detailsModalItem
     }
   }
 })

@@ -19,7 +19,7 @@ export default createStore({
       {
         id: '1',
         src: 'photo2.png',
-        name: 'see'
+        name: 'sea'
       },
       {
         id: '2',

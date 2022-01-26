@@ -1,32 +1,30 @@
 <template lang="pug">
-sidebar(v-if="showMenu"
-  :currentUser="currentUser"
-  :CompletedTask="CompletedTask"
+sidebar(v-if="data.isShowMenu"
+  :CompletedTask="data.CompletedTask"
   :OpenTask="tasks.length"
-  :notification="notification"
-  :showWindow="showWindow"
-  @showWindow="showWindow = !showWindow")
-.popup-window( v-if="showWindow")
+  :isShowWindow="data.isShowWindow"
+  @isShowWindow="isShowWindow")
+.popup-window( v-if="data.isShowWindow")
   .popup-window__text( v-if="tasks.length>0") Are you sure you want to change the number of tasks?
   .popup-window__text(v-if="tasks.length===0") Sorry, but all tasks have already been completed.
   .popup-window__buttons
     button.popup-window__button.popup-window__button_true(
       v-if="tasks.length>0"
-      v-on:click.once="`${CompletedTask+=1}${tasks.length-=1}`"
-      @click="showWindow = !showWindow"
+      v-on:click.once="`${CompletedTask+=1}`; deleteEvent(tasks.length-1)"
+      @click="isShowWindow"
     ) Yes
     button.popup-window__button.popup-window__button_false(
       v-if="tasks.length>0"
-      @click="showWindow = !showWindow"
+      @click="isShowWindow"
     ) No
 .header
-  header-top(:showMenu="showMenu" @showMenu="showMenu = !showMenu")
+  header-top(:isShowMenu="data.isShowMenu" @isShowMenu="isShowMenu")
   header-content
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { mapGetters, mapState } from 'vuex'
+import { computed, defineComponent, reactive } from 'vue'
+import { useStore } from 'vuex'
 import Sidebar from '@/components/Layout/Menu/Sidebar.vue'
 import HeaderContent from '@/components/Layout/Content/HeaderContent.vue'
 import HeaderTop from '@/components/Layout/Header/HeaderTop.vue'
@@ -36,18 +34,26 @@ export default defineComponent({
     HeaderContent,
     Sidebar
   },
-  data () {
-    return {
-      showMenu: false,
-      showWindow: false,
+  setup () {
+    const store = useStore()
+    const data = reactive({
+      isShowMenu: false,
+      isShowWindow: false,
       CompletedTask: 372
-    }
-  },
-  computed: {
-    ...mapState(['notification', 'currentUser']),
-    ...mapGetters({
-      tasks: 'getTasks'
     })
+    const isShowMenu = () => {
+      data.isShowMenu = !data.isShowMenu
+    }
+    const isShowWindow = (item: boolean) => {
+      data.isShowWindow = !item
+    }
+    return {
+      data,
+      isShowMenu,
+      isShowWindow,
+      tasks: computed(() => store.state.moduleTasks.tasks),
+      deleteEvent: (id: number) => store.dispatch('removeItem', { id: id })
+    }
   }
 })
 </script>

@@ -9,10 +9,6 @@
     router-link(to="/").router-link-active
       | Take me home.
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({})
-</script>
 <style lang="scss">
 .theme-container{
   width: 100%;

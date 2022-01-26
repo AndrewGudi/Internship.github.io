@@ -1,92 +1,80 @@
 <template lang="pug">
 .task-details
-  .task-details__bg(@click="clickShowTaskDetailsWindow")
+  .task-details__bg(@click="openTaskDetailsEmit(isShowTaskDetails)")
   .task-details__modal
     .task-details__body
       .task-details__culomn
         .task-details__user
           .task-details__avatar
-            img(:src="`/images/${item.avatar}`" alt="#")
+            img(:src="`/images/${task.avatar}`" alt="#")
           .task-details__user-name
             .task-details__first-name
-              p {{item.firstname}}
+              p {{task.firstname}}
             .task-details__last-name
-              p {{item.lastname}}
+              p {{task.lastname}}
           .task-details__task-date
-            .task-details__post From: {{item.postDate.date}}
-            .task-details__completion To: {{item.executeBefore.date}}
+            .task-details__post From: {{task.postDate.date}}
+            .task-details__completion To: {{task.executeBefore.date}}
         .task-details__text
           .task-details__task-name
-            p(v-if="showButtonEdit === true") {{item.name}}
-            textarea(v-model="changeName" v-if="showButtonEdit !== true" type="text" maxlength = "100") {{this.changeName}}
+            p(v-if="data.isShowButtonEdit") {{task.name}}
+            textarea(v-model="changeName" v-if="!data.isShowButtonEdit" type="text" maxlength = "100") {{changeName}}
           .task-details__task-description
-            p(v-if="showButtonEdit === true") {{item.description}}
-            textarea(v-model="changeDescription" v-if="showButtonEdit !== true" type="text" maxlength = "100") {{this.changeDescription}}
+            p(v-if="data.isShowButtonEdit") {{task.description}}
+            textarea(v-model="changeDescription" v-if="!data.isShowButtonEdit" type="text" maxlength = "100") {{changeDescription}}
         button.task-details__button.edit(
-          v-on:click="showButtonEdit = !showButtonEdit; changeTask()"
-          v-if="showButtonEdit && !isShowEdit"
+          @click="data.isShowButtonEdit = !data.isShowButtonEdit; changeTask()"
+          v-if="data.isShowButtonEdit && !isShowEdit"
           ) Edit
         button.task-details__button.cancel(
-          @click="clickShowTaskDetailsWindow"
-          v-if="showButtonEdit !== true ||  showButtonEdit && isShowEdit"
+          @click="openTaskDetailsEmit(isShowTaskDetails)"
+          v-if="!data.isShowButtonEdit || data.isShowButtonEdit && isShowEdit"
           ) Cancel
       .task-details__button-box
         button.task-details__button.save(
-          v-if="showButtonSave"
-          @click="changeObject(this.changeName, this.changeDescription); clickShowTaskDetailsWindow()"
+          v-if="data.isShowButtonSave"
+          @click="changeObject(changeName, changeDescription).then(); openTaskDetailsEmit(isShowTaskDetails)"
           ) Save
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { TaskInterface } from '@/types/task.interface'
-import { mapActions } from 'vuex'
+import { defineComponent, inject, PropType, reactive, toRefs } from 'vue'
 import { StatusType } from '@/constants/enumStatusType'
 import { mixin as VueClickAway } from 'vue3-click-away'
+import checkChange from '@/composables/checkChange'
+import { TaskInterface } from '@/types/task.interface'
+import openTaskDetails from '@/composables/openTaskDetails'
 
 export default defineComponent({
   name: 'TaskDetailsModal',
   mixins: [VueClickAway],
-  data: () => ({
-    status: StatusType,
-    showButtonSave: false,
-    showButtonEdit: true,
-    changeName: '',
-    changeDescription: ''
-  }),
   props: {
-    item: {
+    task: {
       type: Object as PropType<TaskInterface>,
       required: true
-    },
-    isShowTaskDetails: {
-      type: Boolean,
-      required: true
-    },
-    isShowEdit: {
-      type: Boolean,
-      required: true
     }
   },
-  watch: {
-    changeName () {
-      this.showButtonSave = this.changeName !== this.item.name
-    },
-    changeDescription () {
-      this.showButtonSave = this.changeDescription !== this.item.description
-    }
-  },
-  methods: {
-    ...mapActions(['changeObjectDetails']),
-    clickShowTaskDetailsWindow () {
-      this.$emit('isShowTaskDetails', this.isShowTaskDetails)
-    },
-    changeTask () {
-      this.changeName = this.item.name
-      this.changeDescription = this.item.description
-    },
-    changeObject (name: TaskInterface, description: TaskInterface) {
-      this.changeObjectDetails({ id: this.item.id, name: name, description: description })
+  setup (props, context) {
+    const data = reactive({
+      status: StatusType,
+      isShowButtonSave: false,
+      isShowButtonEdit: true
+    })
+    const isShowEdit = inject('isShowEdit')
+    const isShowTaskDetails = inject('isShowTaskDetails')
+    console.log(isShowTaskDetails)
+    const { task } = toRefs(props)
+    const { changeName, changeDescription, changeTask, changeObject } = checkChange(data, task)
+    const { openTaskDetailsEmit } = openTaskDetails(data, context)
+    return {
+      data,
+      changeName,
+      changeDescription,
+      changeTask,
+      isShowEdit,
+      isShowTaskDetails,
+      openTaskDetailsEmit,
+      changeObject
     }
   }
 })

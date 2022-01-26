@@ -12,9 +12,12 @@ export default defineComponent({
       required: true
     }
   },
-  methods: {
-    imageId () {
-      this.$emit('imageId', this.image.id)
+  setup (props, context) {
+    const imageId = () => {
+      context.emit('imageId', props.image.id)
+    }
+    return {
+      imageId
     }
   }
 })

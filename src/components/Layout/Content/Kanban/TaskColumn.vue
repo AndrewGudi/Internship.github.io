@@ -14,10 +14,8 @@
       v-for="item in getStatus(taskStatus)"
       :key="item.id"
       draggable="true"
-      :isShowTaskDetails="isShowTaskDetails"
-      @isShowTaskDetails="clickShowTaskDetails"
-      @taskDetails="clickTaskDetails"
       @dragstart="startDrag($event, item)"
+      @detailsModalItem="detailsModalItem"
       )
 </template>
 <script lang="ts">
@@ -31,10 +29,6 @@ export default defineComponent({
   name: 'TaskColumn',
   components: { TaskPlate },
   props: {
-    isShowTaskDetails: {
-      type: Boolean,
-      required: true
-    },
     taskStatus: {
       type: String as PropType<StatusType>,
       required: true
@@ -72,22 +66,17 @@ export default defineComponent({
       }
     }
     // eslint-disable-next-line
-    const clickTaskDetails = (item: any) => {
-      context.emit('taskDetails', item)
-    }
-    // eslint-disable-next-line
-    const clickShowTaskDetails = (isShowTaskDetails: any) => {
-      context.emit('isShowTaskDetails', isShowTaskDetails)
+    const detailsModalItem = (item: any) => {
+      context.emit('detailsModalItem', item)
     }
     return {
       getStatus,
       currentTaskStatus,
       startDrag,
       onDrop,
-      clickTaskDetails,
-      clickShowTaskDetails,
       tasks: computed(() => store.state.tasks),
-      currentUser: computed(() => store.state.currentUser)
+      currentUser: computed(() => store.state.currentUser),
+      detailsModalItem
     }
   }
 })

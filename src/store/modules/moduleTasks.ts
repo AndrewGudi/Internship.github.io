@@ -1,5 +1,11 @@
 import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
+// eslint-disable-next-line
+const arraySearch = (state: any, id: any) => {
+  // eslint-disable-next-line
+  const found: any = state.tasks.find((item:TaskInterface) => item.id === id)
+  return found
+}
 
 export default {
   // eslint-disable-next-line
@@ -13,14 +19,14 @@ export default {
   mutations: {
     // eslint-disable-next-line
     changeObjectStatus (state: any, { id, status }: TaskInterface): void {
-      const found = state.tasks.find((item:TaskInterface) => item.id === id)
+      const found = arraySearch(state, id)
       if (found) {
         found.status = status
       }
     },
     // eslint-disable-next-line
     changeObjectDetails (state: any, { id, name, description }: TaskInterface): void {
-      const found = state.tasks.find((item:TaskInterface) => item.id === id)
+      const found = arraySearch(state, id)
       if (found) {
         found.name = name
         found.description = description
@@ -28,7 +34,7 @@ export default {
     },
     // eslint-disable-next-line
     addClassColorTimeTask (state: any, { id, colors }: TaskInterface): void {
-      const found = state.tasks.find((item:TaskInterface) => item.id === id)
+      const found = arraySearch(state, id)
       if (found) {
         found.colors = colors
       }

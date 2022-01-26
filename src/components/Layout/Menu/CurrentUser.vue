@@ -14,13 +14,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { UserInterface } from '@/types/user.Interface.ts'
+import { useStore } from 'vuex'
 export default defineComponent({
-  props: {
-    currentUser: {
-      type: Object as PropType<UserInterface>,
-      required: true
+  setup () {
+    const store = useStore()
+    const currentUser: UserInterface = store.state.currentUser
+    return {
+      currentUser: computed(() => currentUser)
     }
   }
 })
