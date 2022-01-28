@@ -11,15 +11,18 @@ export default function checkChange (data: any, task: any) {
   const changeDescription: any = ref('')
   const checkChangeName = () => {
     data.isShowButtonSave = changeName.value !== task.value.name
+    updatedTask.name = changeName.value
   }
+  const updatedTask = task.value
   const checkChangeDescription = () => {
     data.isShowButtonSave = changeDescription.value !== task.value.description
+    updatedTask.description = changeDescription.value
   }
   const changeTask = () => {
     changeName.value = task.value.name
     changeDescription.value = task.value.description
   }
-  const changeObject = (name: TaskInterface, description: TaskInterface) => store.dispatch('changeObjectDetails', { id: task.value.id, name: name, description: description })
+  const changeObject = (updatedTask: TaskInterface) => store.dispatch('changeObjectDetails', updatedTask)
   watch(changeName, checkChangeName)
   watch(changeDescription, checkChangeDescription)
   return {
@@ -27,6 +30,7 @@ export default function checkChange (data: any, task: any) {
     changeDescription,
     changeTask,
     changeObject,
-    task
+    task,
+    updatedTask
   }
 }
