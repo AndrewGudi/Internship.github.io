@@ -62,7 +62,6 @@ export default defineComponent({
     })
     const isShowEdit = inject('isShowEdit')
     const isShowTaskDetails = inject('isShowTaskDetails')
-    console.log(isShowTaskDetails)
     const { task } = toRefs(props)
     const { changeName, changeDescription, changeTask, changeObject } = checkChange(data, task)
     const { openTaskDetailsEmit } = openTaskDetails(data, context)

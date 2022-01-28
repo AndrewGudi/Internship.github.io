@@ -53,7 +53,7 @@ export default function formAddTaskModal (data: any) {
       // eslint-disable-next-line
       const addItem = () => store.dispatch('addItem', {
         status: StatusType.ToDo,
-        id: 0,
+        id: null,
         avatar: currentUser.avatarka,
         firstname: currentUser.firstname,
         lastname: currentUser.lastname,

@@ -31,7 +31,7 @@ clean-page
         )
 </template>
 <script lang="ts">
-import { ref, onMounted, defineComponent, reactive } from 'vue'
+import { ref, onMounted, defineComponent, reactive, computed } from 'vue'
 import Task from '@/components/Layout/Content/Tasks/Task.vue'
 import { useStore } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
@@ -53,8 +53,10 @@ export default defineComponent({
   },
   setup (props, context) {
     const store = useStore()
-    const tasks = store.state.moduleTasks.tasks
+    const tasks = computed(() => store.state.moduleTasks.tasks)
     const taskList = ref(tasks)
+    const GET_TASKS_FROM_API = () => store.dispatch('GET_TASKS_FROM_API')
+    GET_TASKS_FROM_API()
     const data = reactive({
       errorName: '',
       errorDescription: '',
@@ -77,7 +79,6 @@ export default defineComponent({
     return {
       divs,
       data,
-      deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
       taskList,
       detailsModalItem,
       isShowAddModal,
