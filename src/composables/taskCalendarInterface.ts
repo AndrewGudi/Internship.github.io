@@ -6,13 +6,20 @@ export default function taskCalendarInterface (tasks: any, data: any) {
   const tasksForCalendar: any = reactive([])
   const attributes = computed(() => {
     // eslint-disable-next-line
-    tasks.forEach((task: any) => {
+    tasks.value.forEach((task: any) => {
       tasksForCalendar.push({
         id: task.id,
         customData: {
           title: task.name,
-          class: task.colors
+          class: {
+            executeBefore: {
+              date: task.executeBefore.date,
+              time: task.executeBefore.time,
+              halfDay: task.executeBefore.halfDay
+            }
+          }
         },
+        task: task,
         dates: new Date(task.postDate.date)
       })
     })

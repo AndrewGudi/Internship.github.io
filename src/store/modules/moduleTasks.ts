@@ -1,12 +1,10 @@
 import { TaskInterface } from '@/types/task.interface'
-import tasksApi from '@/service/tasksApi'
+import { tasksApi } from '@/service/tasksApi'
 // eslint-disable-next-line
 const arraySearch = (state: any, id: any) => {
   // eslint-disable-next-line
-  const found: any = state.tasks.find((item:TaskInterface) => item.id === id)
-  return found
+  return state.tasks.find((item: TaskInterface) => item.id === id)
 }
-const { getTasks, postTask, deleteTask, putTask } = tasksApi()
 export default {
   // eslint-disable-next-line
   state: () => ({
@@ -51,6 +49,26 @@ export default {
   },
   actions: {
     // eslint-disable-next-line
+   getTasks (commit: any) {
+      return tasksApi.getTasks()
+    },
+    // eslint-disable-next-line
+    createTask (commit: any, data: any) {
+      return tasksApi.createTask(data)
+    },
+    // eslint-disable-next-line
+    updateTask (commit: any, data: any) {
+      return tasksApi.updateTask(data)
+    },
+    // eslint-disable-next-line
+    deleteTask (commit:any, id: number){
+      return tasksApi.deleteTask(id)
+    },
+    // eslint-disable-next-line
+    async addClassColorTimeTask (context: any, { id, colors }: TaskInterface) {
+      context.commit('addClassColorTimeTask', { id: id, colors: colors })
+    }
+    /*     // eslint-disable-next-line
     async GET_TASKS_FROM_API ({ commit }: any) {
       getTasks(commit)
     },
@@ -63,17 +81,13 @@ export default {
       putTask(commit, task)
     },
     // eslint-disable-next-line
-    async addClassColorTimeTask (context: any, { id, colors }: TaskInterface) {
-      context.commit('addClassColorTimeTask', { id: id, colors: colors })
-    },
-    // eslint-disable-next-line
     async addItem ({commit}: any, task: any) {
       postTask(commit, task)
     },
     // eslint-disable-next-line
     async removeItem  ({commit}: any, task: any) {
       deleteTask(commit, task)
-    }
+    } */
   },
   getters: {
     // eslint-disable-next-line

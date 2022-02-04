@@ -1,5 +1,4 @@
 import { ref, watch } from 'vue'
-import { TaskInterface } from '@/types/task.interface'
 import { useStore } from 'vuex'
 
 // eslint-disable-next-line
@@ -22,7 +21,7 @@ export default function checkChange (data: any, task: any) {
     changeName.value = task.value.name
     changeDescription.value = task.value.description
   }
-  const changeObject = (updatedTask: TaskInterface) => store.dispatch('changeObjectDetails', updatedTask)
+  const changeObject = (updatedTask: any) => store.dispatch('updateTask', updatedTask)
   watch(changeName, checkChangeName)
   watch(changeDescription, checkChangeDescription)
   return {

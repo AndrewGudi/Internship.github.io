@@ -45,7 +45,7 @@ export default defineComponent({
       localTasks: [],
       statusType: StatusType
     })
-    const { checkForm } = formAddTaskModal(data)
+    const { checkForm } = formAddTaskModal(data, context)
     const isShowAddModal = () => {
       context.emit('isShowAddModal')
     }

@@ -1,21 +1,29 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 
-// eslint-disable-next-line
-export default function api () {
-  const resourceUrl = 'https://patient-haze-3407.getsandbox.com'
-  // eslint-disable-next-line
-  const defaultFunctionForMethods = (stateArrayName: any, itemAttribute: any, method: any, commit:any, item: any, mutations: any): void => {
-    axios(resourceUrl + stateArrayName + itemAttribute, {
-      method: method,
-      data: item
-    }).then((response) => {
-      commit(mutations, response.data)
-    })
-      .catch((error) => {
-        console.log(error)
-      })
+const AxiosInstance = axios.create({
+  baseURL: 'https://patient-haze-3407.getsandbox.com/',
+  timeout: 1000
+})
+AxiosInstance.interceptors.response.use(
+  (response) => {
+    return response.data
   }
-  return {
-    defaultFunctionForMethods
+)
+export const serviceApi = {
+  // eslint-disable-next-line
+  get (resource: any, config?: AxiosRequestConfig) {
+    return AxiosInstance.get(resource, config)
+  },
+  // eslint-disable-next-line
+  post (resource: any, data?: any, config?: AxiosRequestConfig) {
+    return AxiosInstance.post(resource, data, config)
+  },
+  // eslint-disable-next-line
+  put (resource: any, data: any, config?: AxiosRequestConfig) {
+    return AxiosInstance.put(resource, data, config)
+  },
+  // eslint-disable-next-line
+  delete (resource: any, config?: AxiosRequestConfig) {
+    return AxiosInstance.delete(resource, config)
   }
 }

@@ -33,7 +33,7 @@
       .task-details__button-box
         button.task-details__button.save(
           v-if="data.isShowButtonSave"
-          @click="changeObject(updatedTask).then(); openTaskDetailsEmit(isShowTaskDetails)"
+          @click="changeObject(updatedTask).then(() => $emit('getTasks')); openTaskDetailsEmit(isShowTaskDetails)"
           ) Save
 </template>
 

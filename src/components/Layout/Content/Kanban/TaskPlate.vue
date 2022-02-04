@@ -21,11 +21,11 @@
         span
   .item-menu(v-if="data.isShowDropdown")
     div(@click="detailsModalItem(); data.isShowDropdown = !data.isShowDropdown" ) EDIT
-    div( v-if="item.status !== data.status.ToDo && item.status !== data.status.Done && item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo).then()")
+    div( v-if="item.status !== data.status.ToDo && item.status !== data.status.Done && item.status !== data.status.InProgress" @click="changeStatus(data.status.ToDo)")
       p TO DO
-    div( v-if="item.status !== data.status.InProgress && item.status !== data.status.Done" @click="changeStatus(data.status.InProgress).then()")
+    div( v-if="item.status !== data.status.InProgress && item.status !== data.status.Done" @click="changeStatus(data.status.InProgress)")
       p IN PROGRESS
-    div( v-if="item.status !== data.status.Done" @click="changeStatus(data.status.Done).then()")
+    div( v-if="item.status !== data.status.Done" @click="changeStatus(data.status.Done)")
       p DONE
     div(@click="deleteTask" ) DELETE
 </template>
@@ -70,14 +70,19 @@ export default defineComponent({
       }
       return 0
     })
-    const deleteTask = () => store.dispatch('removeItem', { id: props.item.id })
+    const updateTask = (task: TaskInterface) => store.dispatch('updateTask', task)
+    const changeStatus = (status: StatusType) => {
+      item.value.status = status
+      updateTask(item.value)
+    }
+    const deleteTask = () => store.dispatch('deleteTask', item.value)
     return {
       leftTime,
       iconStatus,
       data,
       detailsModalItem,
       deleteTask,
-      changeStatus: (status: StatusType) => store.dispatch('changeObjectStatus', { id: props.item.id, status: status })
+      changeStatus
     }
   }
 })

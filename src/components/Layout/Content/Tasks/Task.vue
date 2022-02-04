@@ -9,7 +9,7 @@
     .item-task__text
       .item-task__text-name(@click="detailsModalItem()") {{task.name}}
       .item-task__text-description(@click="detailsModalItem()") {{task.description}}
-      button.deleteTaskBtn(@click="deleteTask") Delete
+      button(type="button").deleteTaskBtn(@click="deleteTask") Delete
     .item-task__time
       .item-task__number {{ task.postDate.time }}
       .item-task__half-day {{task.postDate.halfDay}}
@@ -33,7 +33,9 @@ export default defineComponent({
     const store = useStore()
     const { task } = toRefs(props)
     const currentUser: UserInterface = store.state.currentUser
-    const deleteTask = () => store.dispatch('removeItem', task.value)
+    const deleteTask = () => {
+      store.dispatch('deleteTask', task.value.id).then(() => context.emit('getTasks'))
+    }
     const detailsModalItem = () => {
       context.emit('detailsModalItem', task.value)
     }

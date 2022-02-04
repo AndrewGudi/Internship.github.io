@@ -11,7 +11,7 @@ export default function taskLeftTime (item: any) {
     status: StatusType
   })
   // eslint-disable-next-line
-const leftTime:any = computed(() => {
+  const leftTime:any = computed(() => {
     let colors = ''
     // eslint-disable-next-line
   const addClass = (colors: any) => store.dispatch('addClassColorTimeTask', { id: item.value.id, colors: colors })
@@ -34,7 +34,6 @@ const leftTime:any = computed(() => {
     hours = hours - (days * 24)
     minutes = minutes - (days * 24 * 60) - (hours * 60)
     seconds = seconds - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60)
-
     if (days === 0 && days < 1) {
       timeLeftToComplete = hours + ' h. ' + minutes + ' m. '
       colors = changeColorGray
