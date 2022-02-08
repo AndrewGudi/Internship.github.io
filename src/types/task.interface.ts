@@ -7,7 +7,7 @@ export interface Date{
   title: string
 }
 export interface TaskInterface{
-  id: string
+  id: number
   avatar: ImageInterface
   firstname: string
   lastname: string

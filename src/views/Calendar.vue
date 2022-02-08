@@ -11,28 +11,26 @@ clean-page
         .calendar__column
           span.calendar__day {{ day.day }}
           .calendar__task-box
-            .calendar__task-name(v-for="item in attributes" :key="item.id" :class="'task-' + item.customData.class")
-              p(@click="calendarDetailsModalItem(item.key)") {{item.customData.title}}
+            calendar-task.calendar__task-name(v-for="item in attributes" @taskOpenPopup="calendarDetailsModalItem"  :task="item" :key="item.id")
 </template>
-<script>
-import { defineComponent, reactive, ref } from 'vue'
+<script lang="ts">
+import { defineComponent, onMounted, reactive } from 'vue'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import ComingSoon from '@/components/Layout/Content/ComingSoon.vue'
-import { useStore } from 'vuex'
-import TaskDetailsModal from '../components/Layout/Content/Tasks/TaskDetailsModal'
-import taskLeftTime from '../composables/taskLeftTime'
 import taskCalendarInterface from '../composables/taskCalendarInterface'
 import openTaskDetails from '../composables/openTaskDetails'
+import { getTasks } from '@/composables/getTasks'
+import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
+import CalendarTask from '@/components/Layout/Content/Calendar/CalendarTask.vue'
 
 export default defineComponent({
   components: {
+    CalendarTask,
     TaskDetailsModal,
     CleanPage,
     ComingSoon
   },
   setup (props, context) {
-    const store = useStore()
-    const tasks = store.state.moduleTasks.tasks
     const data = reactive({
       masks: {
         weekdays: 'WWW'
@@ -41,12 +39,12 @@ export default defineComponent({
       item: [],
       isShowTaskDetails: false
     })
-    tasks.forEach((task) => {
-      const item = ref(task)
-      const { leftTime } = taskLeftTime(item)
-      return leftTime.value
-    })
+    const { tasks, loadTasksMethods } = getTasks()
     const { attributes } = taskCalendarInterface(tasks, data)
+    onMounted(async () => {
+      await loadTasksMethods()
+      return attributes.value
+    })
     const { calendarDetailsModalItem, isShowTaskModal } = openTaskDetails(data, context)
     return {
       data,

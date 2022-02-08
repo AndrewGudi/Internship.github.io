@@ -19,7 +19,7 @@
       )
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
+import { computed, defineComponent, onMounted, PropType, ref, toRefs } from 'vue'
 import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
 import { useStore } from 'vuex'
@@ -32,13 +32,24 @@ export default defineComponent({
     taskStatus: {
       type: String as PropType<StatusType>,
       required: true
+    },
+    tasksAxios: {
+      type: Object,
+      required: true
     }
   },
   setup (props, context) {
     const store = useStore()
-    const tasks = store.state.moduleTasks.tasks
+    const tasks:any = ref([])
+    const { tasksAxios } = toRefs(props)
+    const loadTasksMethods = async () => {
+      tasks.value = await tasksAxios.value
+    }
+    onMounted(() => {
+      loadTasksMethods()
+    })
     const getStatus = (status: StatusType) => {
-      return tasks.filter((task: TaskInterface) => task.status === status)
+      return tasks.value.filter((task: TaskInterface) => task.status === status)
     }
     const currentTaskStatus = (taskStatus: StatusType) => {
       if (taskStatus === StatusType.ToDo) {
@@ -60,9 +71,11 @@ export default defineComponent({
     // eslint-disable-next-line
     const onDrop = (evt: any, status: StatusType) => {
       const itemID = evt.dataTransfer.getData('itemID')
-      const item = tasks.find((item: TaskInterface) => item.id === itemID)
+      // eslint-disable-next-line
+      const item: any = tasks.value.find((item: TaskInterface) => item.id === Number(itemID))
       if (item.status !== StatusType.Done) {
         item.status = status
+        store.dispatch('updateTask', item).then(() => loadTasksMethods())
       }
     }
     // eslint-disable-next-line
@@ -74,7 +87,6 @@ export default defineComponent({
       currentTaskStatus,
       startDrag,
       onDrop,
-      tasks: computed(() => store.state.tasks),
       currentUser: computed(() => store.state.currentUser),
       detailsModalItem
     }

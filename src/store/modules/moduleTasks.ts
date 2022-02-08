@@ -1,22 +1,20 @@
-import { StatusType } from '@/constants/enumStatusType'
 import { TaskInterface } from '@/types/task.interface'
+import { tasksApi } from '@/service/tasksApi'
 // eslint-disable-next-line
 const arraySearch = (state: any, id: any) => {
   // eslint-disable-next-line
-  const found: any = state.tasks.find((item:TaskInterface) => item.id === id)
-  return found
+  return state.tasks.find((item: TaskInterface) => item.id === id)
 }
-
 export default {
   // eslint-disable-next-line
   state: () => ({
-    tasks: [
-      { status: StatusType.ToDo, id: '0', avatar: 'avatar.png', firstname: 'Darika', lastname: 'Samak', name: 'noname', description: 'Who would you be in the film of your life?', postDate: { date: '1/1/2022', time: '6:02', halfDay: 'PM' }, executeBefore: { date: '1/3/2022', time: '6:02', halfDay: 'PM' } },
-      { status: StatusType.Done, id: '1', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Whats your favorite dinosaur?', time: '6:00', postDate: { date: '1/1/2022', time: '6:02', halfDay: 'PM' }, executeBefore: { date: '1/4/2022', time: '6:02', halfDay: 'PM' } },
-      { status: StatusType.InProgress, id: '2', avatar: 'avatar.png', firstname: 'Emilee', lastname: 'Simchenko', name: 'noname', description: 'Which of your bad habits are you willing to admit?', postDate: { date: '1/1/2022', time: '6:02', halfDay: 'PM' }, executeBefore: { date: '1/13/2022', time: '6:02', halfDay: 'PM' } }
-    ]
+    tasks: []
   }),
   mutations: {
+    // eslint-disable-next-line
+    SET_TASKS_TO_VUEX: (state: any, tasks: any): void => {
+      state.tasks = tasks
+    },
     // eslint-disable-next-line
     changeObjectStatus (state: any, { id, status }: TaskInterface): void {
       const found = arraySearch(state, id)
@@ -25,11 +23,11 @@ export default {
       }
     },
     // eslint-disable-next-line
-    changeObjectDetails (state: any, { id, name, description }: TaskInterface): void {
-      const found = arraySearch(state, id)
-      if (found) {
-        found.name = name
-        found.description = description
+    changeObjectDetails (state: any, updatedTask: TaskInterface): void {
+      // eslint-disable-next-line
+      const index = state.tasks.findIndex((task: any) => task.id === updatedTask.id)
+      if (index !== -1) {
+        state.tasks.splice(index, 1, updatedTask)
       }
     },
     // eslint-disable-next-line
@@ -40,39 +38,56 @@ export default {
       }
     },
     // eslint-disable-next-line
-    addItem (state: any, item:any): void {
-      const lastItem = state.tasks[state.tasks.length - 1].id
-      const addId = item
-      addId.id = String(Number(lastItem) + 1)
-      state.tasks.push(addId)
+    addItem (state: any, task:any): void {
+      state.tasks.push(task)
     },
     // eslint-disable-next-line
-    removeItem (state: any, { id }: TaskInterface): void {
-      const index = state.tasks.findIndex((item:TaskInterface) => item.id === id)
-      state.tasks.splice(index, 1)
+    removeItem (state: any,  task: TaskInterface): void {
+      // eslint-disable-next-line
+      state.tasks = state.tasks.filter((t: any) => task.id !== t.id)
     }
   },
   actions: {
     // eslint-disable-next-line
-    changeObjectStatus (context: any, { id, status }: TaskInterface): void {
+   getTasks (commit: any) {
+      return tasksApi.getTasks()
+    },
+    // eslint-disable-next-line
+    createTask (commit: any, data: any) {
+      return tasksApi.createTask(data)
+    },
+    // eslint-disable-next-line
+    updateTask (commit: any, data: any) {
+      return tasksApi.updateTask(data)
+    },
+    // eslint-disable-next-line
+    deleteTask (commit:any, id: number){
+      return tasksApi.deleteTask(id)
+    },
+    // eslint-disable-next-line
+    async addClassColorTimeTask (context: any, { id, colors }: TaskInterface) {
+      context.commit('addClassColorTimeTask', { id: id, colors: colors })
+    }
+    /*     // eslint-disable-next-line
+    async GET_TASKS_FROM_API ({ commit }: any) {
+      getTasks(commit)
+    },
+    // eslint-disable-next-line
+    async changeObjectStatus (context: any, { id, status }: TaskInterface) {
       context.commit('changeObjectStatus', { id: id, status: status })
     },
     // eslint-disable-next-line
-    changeObjectDetails (context: any, { id, name, description }: TaskInterface): void {
-      context.commit('changeObjectDetails', { id: id, name: name, description: description })
+    async changeObjectDetails ({commit}: any, task: TaskInterface)  {
+      putTask(commit, task)
     },
     // eslint-disable-next-line
-    addClassColorTimeTask (context: any, { id, colors }: TaskInterface): void {
-      context.commit('addClassColorTimeTask', { id: id, colors: colors })
+    async addItem ({commit}: any, task: any) {
+      postTask(commit, task)
     },
     // eslint-disable-next-line
-    addItem (context: any, item: any): void {
-      context.commit('addItem', item)
-    },
-    // eslint-disable-next-line
-    removeItem (context: any, { id }: TaskInterface): void {
-      context.commit('removeItem', { id: id })
-    }
+    async removeItem  ({commit}: any, task: any) {
+      deleteTask(commit, task)
+    } */
   },
   getters: {
     // eslint-disable-next-line

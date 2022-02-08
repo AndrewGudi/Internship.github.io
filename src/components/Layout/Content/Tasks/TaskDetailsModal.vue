@@ -33,7 +33,7 @@
       .task-details__button-box
         button.task-details__button.save(
           v-if="data.isShowButtonSave"
-          @click="changeObject(changeName, changeDescription).then(); openTaskDetailsEmit(isShowTaskDetails)"
+          @click="changeObject(updatedTask).then(() => $emit('getTasks')); openTaskDetailsEmit(isShowTaskDetails)"
           ) Save
 </template>
 
@@ -62,9 +62,8 @@ export default defineComponent({
     })
     const isShowEdit = inject('isShowEdit')
     const isShowTaskDetails = inject('isShowTaskDetails')
-    console.log(isShowTaskDetails)
     const { task } = toRefs(props)
-    const { changeName, changeDescription, changeTask, changeObject } = checkChange(data, task)
+    const { changeName, changeDescription, changeTask, changeObject, updatedTask } = checkChange(data, task)
     const { openTaskDetailsEmit } = openTaskDetails(data, context)
     return {
       data,
@@ -74,7 +73,8 @@ export default defineComponent({
       isShowEdit,
       isShowTaskDetails,
       openTaskDetailsEmit,
-      changeObject
+      changeObject,
+      updatedTask
     }
   }
 })

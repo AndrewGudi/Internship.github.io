@@ -27,12 +27,13 @@ task-details-modal(
   .task-completion__body
     task-column(v-for="taskStatus in data.status"
     :taskStatus="taskStatus"
+    :tasksAxios="tasksAxios"
     @detailsModalItem="detailsModalItem"
     )
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { computed, defineComponent, reactive } from 'vue'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import { StatusType } from '@/constants/enumStatusType'
 import TaskDetailsModal from '@/components/Layout/Content/Tasks/TaskDetailsModal.vue'
@@ -41,6 +42,7 @@ import TaskColumn from '@/components/Layout/Content/Kanban/TaskColumn.vue'
 import TaskPlate from '@/components/Layout/Content/Kanban/TaskPlate.vue'
 import searchTaskOnArray from '@/composables/searchTaskOnArray'
 import openTaskDetails from '@/composables/openTaskDetails'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   mixins: [VueClickAway],
@@ -51,6 +53,7 @@ export default defineComponent({
     CleanPage
   },
   setup (props, context) {
+    const store = useStore()
     const data = reactive({
       range: '',
       taskFilter: [],
@@ -64,6 +67,7 @@ export default defineComponent({
       isShowSearch: true,
       isShowEdit: false
     })
+    const tasksAxios = computed(() => store.dispatch('getTasks'))
     const { searchTask, onClickAwayShowSearch, onClickAway, isShowSearchModal } = searchTaskOnArray(data)
     const { detailsModalItem, isShowTaskModal } = openTaskDetails(data, context)
     return {
@@ -73,7 +77,8 @@ export default defineComponent({
       onClickAway,
       detailsModalItem,
       isShowSearchModal,
-      isShowTaskModal
+      isShowTaskModal,
+      tasksAxios
     }
   }
 })

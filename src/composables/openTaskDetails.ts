@@ -1,10 +1,9 @@
 import { provide } from 'vue'
-import { useStore } from 'vuex'
+import { getTasks } from '@/composables/getTasks'
 
 // eslint-disable-next-line
 export default function openTaskDetails (data: any, context: any) {
-  const store = useStore()
-  const tasks = store.state.moduleTasks.tasks
+  const { tasks, loadTasksMethods } = getTasks()
   const isShowTaskModal = () => {
     data.isShowTaskDetails = !data.isShowTaskDetails
   }
@@ -17,8 +16,10 @@ export default function openTaskDetails (data: any, context: any) {
     isShowTaskModal()
   }
   const calendarDetailsModalItem = (id: number) => {
-    data.item = tasks[id]
-    isShowTaskModal()
+    loadTasksMethods().then(() => {
+      data.item = tasks.value[id]
+      isShowTaskModal()
+    })
   }
   provide('isShowEdit', data.isShowEdit)
   provide('isShowTaskDetails', data.isShowTaskDetails)

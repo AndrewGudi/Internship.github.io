@@ -2,7 +2,7 @@ import { StatusType } from '@/constants/enumStatusType'
 import { useStore } from 'vuex'
 
 // eslint-disable-next-line
-export default function formAddTaskModal (data: any) {
+export default function formAddTaskModal (data: any, context: any) {
   const store = useStore()
   const currentUser = store.state.currentUser
   const checkForm = (e: Event) => {
@@ -50,10 +50,8 @@ export default function formAddTaskModal (data: any) {
           }
         }
       }
-      // eslint-disable-next-line
-      const addItem = () => store.dispatch('addItem', {
+      const createTask = () => store.dispatch('createTask', {
         status: StatusType.ToDo,
-        id: 0,
         avatar: currentUser.avatarka,
         firstname: currentUser.firstname,
         lastname: currentUser.lastname,
@@ -62,11 +60,11 @@ export default function formAddTaskModal (data: any) {
         postDate: postDateEdited,
         executeBefore: executeBeforeEdited
       })
-      addItem()
+      createTask().then(() => context.emit('getTasks'))
+      e.preventDefault()
       data.name = ''
       data.description = ''
     }
-    e.preventDefault()
   }
   return {
     checkForm

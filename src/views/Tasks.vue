@@ -3,11 +3,13 @@ task-details-modal(
   v-if="data.isShowTaskDetails"
   :task="data.item"
   @isShowTaskModal="isShowTaskModal"
+  @getTasks="loadTasksMethods"
 )
 .tasks__add-modal(v-if="data.isShowAddTask")
   .tasks__bg(@click="isShowAddModal")
   task-add-modal(
   @isShowAddModal="isShowAddModal"
+  @getTasks="loadTasksMethods"
   )
 clean-page
   .tasks__column
@@ -28,12 +30,12 @@ clean-page
         :key="task.id"
         :ref="el => { if (el) divs[index] = el }"
         @detailsModalItem="detailsModalItem"
+        @getTasks="loadTasksMethods"
         )
 </template>
 <script lang="ts">
-import { ref, onMounted, defineComponent, reactive } from 'vue'
+import { ref, onMounted, defineComponent, reactive, computed } from 'vue'
 import Task from '@/components/Layout/Content/Tasks/Task.vue'
-import { useStore } from 'vuex'
 import CleanPage from '@/components/Layout/Content/CleanPage.vue'
 import 'animate.css'
 import TaskAddModal from '@/components/Layout/Content/Tasks/TaskAddModal.vue'
@@ -42,6 +44,7 @@ import { mixin as VueClickAway } from 'vue3-click-away'
 import addAnimation from '@/composables/addAnimation'
 import openTaskDetails from '@/composables/openTaskDetails'
 import openAddTask from '@/composables/openAddTask'
+import { getTasks } from '@/composables/getTasks'
 
 export default defineComponent({
   mixins: [VueClickAway],
@@ -52,9 +55,6 @@ export default defineComponent({
     Task
   },
   setup (props, context) {
-    const store = useStore()
-    const tasks = store.state.moduleTasks.tasks
-    const taskList = ref(tasks)
     const data = reactive({
       errorName: '',
       errorDescription: '',
@@ -64,24 +64,27 @@ export default defineComponent({
       isShowAddTask: false,
       isShowEdit: false,
       item: {},
+      tasks: [],
       isShowWindow: false
     })
-    // eslint-disable-next-line
-    const divs = ref<any[]>([])
+    const { tasks, loadTasksMethods } = getTasks()
     onMounted(() => {
+      loadTasksMethods()
       const { addingTaskAnimation } = addAnimation(divs)
       addingTaskAnimation()
     })
+    // eslint-disable-next-line
+    const divs = ref<any[]>([])
     const { isShowAddModal } = openAddTask(data)
     const { detailsModalItem, isShowTaskModal } = openTaskDetails(data, context)
     return {
+      loadTasksMethods,
       divs,
       data,
-      deleteEvent: (id: number) => store.dispatch('removeItem', { id: id }),
-      taskList,
       detailsModalItem,
       isShowAddModal,
-      isShowTaskModal
+      isShowTaskModal,
+      taskList: computed(() => tasks.value)
     }
   }
 })
