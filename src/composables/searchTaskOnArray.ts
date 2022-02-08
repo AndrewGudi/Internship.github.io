@@ -1,10 +1,10 @@
 import { TaskInterface } from '@/types/task.interface'
-import { useStore } from 'vuex'
+import { getTasks } from '@/composables/getTasks'
 
 // eslint-disable-next-line
 export default function searchTaskOnArray (data: any) {
-  const store = useStore()
-  const tasks = store.state.moduleTasks.tasks
+  const { tasks, loadTasksMethods } = getTasks()
+  loadTasksMethods().then()
   const isShowSearchModal = () => {
     if (!data.isShowSearch) {
       data.isShowSearch = !data.isShowSearch
@@ -27,11 +27,11 @@ export default function searchTaskOnArray (data: any) {
       resultDate.push(day)
     }
     if (search && !range) {
-      return tasks.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
+      return tasks.value.filter((item: TaskInterface) => item.name.indexOf(search) !== -1)
     }
     if ((range && !search) || (range && search)) {
       for (let j = 0; j < resultDate.length; j++) {
-        tasks.forEach((task: TaskInterface) => {
+        tasks.value.forEach((task: TaskInterface) => {
           if (task.postDate.date === resultDate[j] || task.executeBefore.date === resultDate[j]) {
             taskFilterDate.push(task)
           }
