@@ -40,6 +40,7 @@ export default defineComponent({
   },
   setup (props, context) {
     const store = useStore()
+    // eslint-disable-next-line
     const tasks:any = ref([])
     const { tasksAxios } = toRefs(props)
     const loadTasksMethods = async () => {

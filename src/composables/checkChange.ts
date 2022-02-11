@@ -21,6 +21,7 @@ export default function checkChange (data: any, task: any) {
     changeName.value = task.value.name
     changeDescription.value = task.value.description
   }
+  // eslint-disable-next-line
   const changeObject = (updatedTask: any) => store.dispatch('updateTask', updatedTask)
   watch(changeName, checkChangeName)
   watch(changeDescription, checkChangeDescription)
